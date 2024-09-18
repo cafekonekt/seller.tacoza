@@ -27,7 +27,7 @@ export default function QrDialog({ table }) {
         </DialogHeader>
         <div className="flex flex-col items-center justify-center w-full h-full my-4 border-dashed border-2">
           <QRCodeSVG
-            value={`http://localhost:3000${table.url}`} // Value to encode
+            value={`${process.env.SERVER_URL}${table.url}`} // Value to encode
             size={150} // Size of the QR Code
             className="w-40 h-40" // Adjusted width and height
           />

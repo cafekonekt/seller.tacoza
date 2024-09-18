@@ -22,7 +22,7 @@ export function NewOrder() {
   const { liveOrder, setOrder, subscriptionURL } = useOrderContext();
   
   useEffect(() => {
-    const socket = new WebSocket(`ws://localhost:8000${subscriptionURL}/`);
+    const socket = new WebSocket(`${process.env.NEXT_PUBLIC_SOCKET}${subscriptionURL}/`);
     
     socket.onopen = () => {
       console.log("socket connected");
