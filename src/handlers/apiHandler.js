@@ -59,7 +59,7 @@ const apiRequest = async (endpoint, options = {}, timeout = 10000) => {
       return null;
     } else if (error instanceof HttpError) {
       console.error("HTTP Error:", error);
-      return error.status;
+      return error;
     } else {
       console.error("Unexpected Error:", error);
       return null;

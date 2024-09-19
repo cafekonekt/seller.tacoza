@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth/session';
 
 // Define protected and public routes
-const protectedRoutes = ['/', '/customers', '/finance', '/menu', '/build-qr', '/offers', '/orders', '/restaurant', '/tables', '/seller'];
+const protectedRoutes = ['/', '/customers', '/finance', '/menu', '/build-qr', '/offers', '/orders', '/restaurant', '/table', '/seller'];
 const publicRoutes = ['/login'];
 
 export default async function middleware(req) {
@@ -11,7 +11,7 @@ export default async function middleware(req) {
   const isPublicRoute = publicRoutes.includes(path);
 
   const session = await getSession();
-
+  
   // Redirect to /login if user is not authenticated on a protected route
   if (isProtectedRoute && !session?.user) {
     return NextResponse.redirect(new URL(`/login?next=${path}`, req.nextUrl));

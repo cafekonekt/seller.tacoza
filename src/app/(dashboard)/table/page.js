@@ -16,6 +16,8 @@ import { getArea } from "@/lib/table/getArea";
 import { AddTable } from "./AddTable";
 import { AddArea } from "./AddArea";
 import { DeleteTable } from "./DeleteTable";
+import { logout } from "@/lib/auth/session";
+import { revalidatePath } from "next/cache";
 
 export function TableList({ tables }) {
   return (
@@ -54,7 +56,6 @@ export default async function TablePage() {
   const response_tables = getTables();
   const response_ares = getArea();
   const [tables, areas] = await Promise.all([response_tables, response_ares]);
-
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">

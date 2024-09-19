@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/auth/session";
+import { getSession, logout } from "@/lib/auth/session";
 import { apiGet } from "@/handlers/apiHandler";
 import { notFound } from "next/navigation";
 
@@ -10,6 +10,11 @@ export async function getOutlet() {
       cache: "no-store",
     },
   });
-  if (!response) notFound();
+  if (response === 404) return notFound();
+  if (response === 401) {
+    logout();
+    redirect("/login");
+  }
+  
   return response;
 }
