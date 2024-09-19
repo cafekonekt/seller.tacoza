@@ -1,4 +1,5 @@
-import { getSession } from "@/lib/auth/session";
+"use server"
+import { getSession, logout } from "@/lib/auth/session";
 import { apiGet } from "@/handlers/apiHandler";
 import { notFound } from "next/navigation";
 
@@ -10,6 +11,7 @@ export async function getArea() {
       cache: "no-store",
     },
   });
+  console.log("response", response);
   if (response.status === 404) return notFound();
   if (response.status === 401) {
     logout();
