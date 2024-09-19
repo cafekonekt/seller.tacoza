@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getSession, logout } from '@/lib/auth/session';
+import { getSession } from '@/lib/auth/session';
 
 // Define protected and public routes
 const protectedRoutes = ['/', '/customers', '/finance', '/menu', '/build-qr', '/offers', '/orders', '/restaurant', '/tables', '/seller'];

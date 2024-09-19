@@ -1,3 +1,4 @@
+"use server"
 import { logout } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 
@@ -58,11 +59,7 @@ const apiRequest = async (endpoint, options = {}, timeout = 10000) => {
       return null;
     } else if (error instanceof HttpError) {
       console.error("HTTP Error:", error);
-      if (error.status === 401) {
-        logout();
-        redirect("/login");
-      }
-      return null;
+      return error.status;
     } else {
       console.error("Unexpected Error:", error);
       return null;

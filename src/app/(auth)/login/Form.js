@@ -24,10 +24,11 @@ export function Form({ searchParams }) {
   const { toast } = useToast();
   
   useEffect(() => {
+    console.log(state)
     if (state.message) {
       toast({
-        variant: state.status,
         title: state.message,
+        variant: state.status,
       });
     }
     if (state.status === "success") {

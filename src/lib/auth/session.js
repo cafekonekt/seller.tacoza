@@ -9,25 +9,30 @@ export async function login(prevState, formData) {
     password: formData.get("password"),
   };
 
-  const response = await apiPost("/api/auth/login/", user, {
-    headers: {
-      cache: "no-store",
-    },
-  });
-
-  if (response) {
-    const cookieStore = cookies();
-    const expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7); // 7 days
-    const session = await encrypt(response);
-    cookieStore.set({
-      name: "session",
-      value: session,
-      httpOnly: true,
-      expires,
+  try {
+    const response = await apiPost("/api/auth/login/", user, {
+      headers: {
+        cache: "no-store",
+      },
     });
-    return { message: "Login successful", status: "success" };
+    if (response==401) {
+    return { message: "Invalid email or password", status: "destructive" };
+    }
+    if (response) {
+      const cookieStore = cookies();
+      const expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7); // 7 days
+      const session = await encrypt(response);
+      cookieStore.set({
+        name: "session",
+        value: session,
+        httpOnly: true,
+        expires,
+      });
+      return { message: "Login successful", status: "success" };  
+    }
+  } catch (error) {
+    return { message: "Error logging in", status: "destructive" };
   }
-  return { message: "Error logging in", status: "destructive" };
 }
 
 export async function getSession() {
