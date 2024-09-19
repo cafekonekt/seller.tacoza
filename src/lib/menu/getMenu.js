@@ -1,6 +1,7 @@
 "use server";
-import { getSession } from "@/lib/auth/session";
+import { getSession, logout } from "@/lib/auth/session";
 import { apiGet } from "@/handlers/apiHandler";
+import { notFound, redirect } from "next/navigation";
 
 export async function getMenu() {
   const user = await getSession();
@@ -9,5 +10,10 @@ export async function getMenu() {
       Authorization: `Bearer ${user?.tokens?.access}`,
     },
   });
+  if (response.status === 404) return notFound();
+  if (response.status === 401) {
+    logout();
+    redirect("/login");
+  }
   return response;
 }

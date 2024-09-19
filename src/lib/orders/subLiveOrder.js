@@ -1,7 +1,7 @@
 "use server"
-import { getSession } from "@/lib/auth/session";
+import { getSession, logout } from "@/lib/auth/session";
 import { apiGet } from "@/handlers/apiHandler";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 export async function getSubscriptionURL() {
   const user = await getSession();
@@ -11,6 +11,10 @@ export async function getSubscriptionURL() {
       cache: "no-store",
     },
   });
-  if (!response) notFound();
+  if (response.status === 404) return notFound();
+  if (response.status === 401) {
+    logout();
+    redirect("/login");
+  }
   return response;
 }
