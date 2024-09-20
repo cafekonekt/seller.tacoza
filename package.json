@@ -46,7 +46,7 @@
     "react-day-picker": "8.10.1",
     "react-dom": "rc",
     "react-qr-code": "^2.0.15",
-    "recharts": "^2.12.7",
+    "recharts": "^2.13.0-alpha.4",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7"
@@ -56,5 +56,8 @@
     "eslint-config-next": "14.2.7",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.12"
+  },
+  "overrides": {
+    "react-is": "^19.0.0-beta-26f2496093-20240514"
   }
 }
