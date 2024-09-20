@@ -5,6 +5,11 @@ import { RestaurantGallery } from "./RestaurantGallery";
 import { RestaurantPayment } from "./RestaurantPayment";
 import { getOutlet } from "@/lib/outlet/getOutlet";
 
+export const metadata = {
+  title: "Manage Restaurant - tacoza Seller",
+  description: "tacoza Seller Dashboard",
+};
+
 export default async function Manage() {
   const outlet = await getOutlet();
   console.log(outlet);

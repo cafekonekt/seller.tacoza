@@ -2,6 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Download, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 
+export const metadata = {
+  title: "Marketing - tacoza Seller",
+  description: "tacoza Seller Dashboard",
+};
+
 export default function Templates({ n = 10 }) {
   return (
     <main className="flex flex-1 flex-col gap-8 p-4 lg:gap-6 lg:p-6 overflow-y-scroll max-h-screen">

@@ -19,6 +19,11 @@ import { DeleteTable } from "./DeleteTable";
 import { logout } from "@/lib/auth/session";
 import { revalidatePath } from "next/cache";
 
+export const metadata = {
+  title: "Tables - tacoza Seller",
+  description: "tacoza Seller Dashboard",
+};
+
 export function TableList({ tables }) {
   return (
     <Card className="py-8">
@@ -34,17 +39,18 @@ export function TableList({ tables }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {tables && tables.map((name) => (
-              <TableRow key={name.name}>
-                <TableCell className="font-medium">{name.name}</TableCell>
-                <TableCell>{name.capacity}</TableCell>
-                <TableCell>{name.area}</TableCell>
-                <TableCell className="justify-end flex gap-2">
-                  <QrDialog table={name} />        
-                  <DeleteTable tableId={name.id} />
-                </TableCell>
-              </TableRow>
-            ))}
+            {tables &&
+              tables.map((name) => (
+                <TableRow key={name.name}>
+                  <TableCell className="font-medium">{name.name}</TableCell>
+                  <TableCell>{name.capacity}</TableCell>
+                  <TableCell>{name.area}</TableCell>
+                  <TableCell className="justify-end flex gap-2">
+                    <QrDialog table={name} />
+                    <DeleteTable tableId={name.id} />
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </CardContent>

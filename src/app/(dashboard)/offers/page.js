@@ -33,6 +33,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings2, Users } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
+export const metadata = {
+  title: "Offers - tacoza Seller",
+  description: "tacoza Seller Dashboard",
+};
+
 export default function Offers() {
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
