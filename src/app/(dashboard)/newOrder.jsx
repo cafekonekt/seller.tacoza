@@ -81,7 +81,7 @@ export function NewOrder() {
                 </span>
               </span>
               <div className="flex flex-col items-end text-base font-medium">
-                1st Order by {order.user ? order.user : "Guest"}
+                1st Order by {order.user.name ? order.user.name : "Guest"}
                 <div className="flex items-center border bg-muted px-2 rounded-full w-fit mt-2 animate-pulse">
                   <UtensilsCrossed className="w-5 h-5 mr-2" />
                   {order.order_type.toUpperCase()}
