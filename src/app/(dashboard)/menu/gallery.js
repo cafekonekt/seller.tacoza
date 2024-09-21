@@ -1,3 +1,4 @@
+"use server"
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,7 +11,7 @@ import {
 import { Delete, Edit, ImageUp, Trash2 } from "lucide-react";
 import Image from "next/image";
 
-export default function Gallery({ n = 10 }) {
+export default async function Gallery({ n = 10 }) {
   return (
     <>
       <Button>
@@ -54,7 +55,7 @@ export default function Gallery({ n = 10 }) {
   );
 }
 
-export function GalleryDialog() {
+export async function GalleryDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
