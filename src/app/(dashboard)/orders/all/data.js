@@ -34,7 +34,7 @@ export const columns = [
   {
     accessorKey: "user",
     header: "User",
-    cell: ({ row }) => <div>{row.getValue("user")}</div>,
+    cell: ({ row }) => <div>{row.getValue("user").name}</div>,
   },
   {
     accessorKey: "table",
