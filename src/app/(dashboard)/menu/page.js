@@ -10,11 +10,6 @@ import { getMenu } from "@/lib/menu/getMenu";
 import { getAddons } from "@/lib/menu/getAddons";
 import Gallery from "./gallery";
 
-export const metadata = {
-  title: "Menu - tacoza Seller",
-  description: "tacoza Seller Dashboard",
-};
-
 export default async function Menu() {
   const items = await getMenu();
   const addons = await getAddons();
