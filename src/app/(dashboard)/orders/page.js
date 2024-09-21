@@ -100,7 +100,7 @@ export default function LiveOrder() {
                         </span>
                         <div className="flex flex-col items-end text-base font-medium">
                           <span className="text-end leading-tight">
-                            Order by {order.user}
+                            Order by {order.user.name}
                           </span>
                           <div className="flex items-center border bg-muted px-2 rounded-full w-fit mt-2 animate-pulse">
                             <UtensilsCrossed className="w-5 h-5 mr-2" />
