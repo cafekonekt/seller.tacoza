@@ -5,7 +5,7 @@ import { notFound, redirect } from "next/navigation";
 
 export async function getMenu() {
   const user = await getSession();
-  const response = await apiGet("/api/shop/menu", {
+  const response = await apiGet("/api/shop/food-items/", {
     headers: {
       Authorization: `Bearer ${user?.tokens?.access}`,
     },

@@ -11,15 +11,18 @@ export async function createTable(prevState, formData) {
     capacity: formData.get("capacity"),
     area: formData.get("area"),
   };
-
-  const response = await apiPost("/api/shop/tables/", data, {
-    headers: {
-      Authorization: `Bearer ${user?.tokens?.access}`,
-    },
-  });
-  if (!response) {
+  try {
+    const response = await apiPost("/api/shop/tables/", data, {
+      headers: {
+        Authorization: `Bearer ${user?.tokens?.access}`,
+      },
+    });
+    if (response.status === 404 || response.status === 401 || response.status === 400 || response.status === 500) {
+      return { message: "Error Creating Table", status: "destructive" };
+    }
+    revalidatePath("/table");
+    return { message: "Table created successfully", status: "success" };
+  } catch (error) {
     return { message: "Error Creating Table", status: "destructive" };
   }
-  revalidatePath("/table");
-  return { message: "Table created successfully", status: "success" };
 }

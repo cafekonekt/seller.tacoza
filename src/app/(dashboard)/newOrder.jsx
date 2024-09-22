@@ -12,7 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { Printer, UtensilsCrossed, VolumeX } from "lucide-react";
+import { Link, Printer, UtensilsCrossed, VolumeX } from "lucide-react";
 import Image from "next/image";
 import { useOrderContext } from "@/context/OrderContext";
 
@@ -22,26 +22,28 @@ export function NewOrder() {
   const { liveOrder, setOrder, subscriptionURL } = useOrderContext();
   
   useEffect(() => {
-    const socket = new WebSocket(`${process.env.NEXT_PUBLIC_SOCKET}${subscriptionURL}/`);
-    
-    socket.onopen = () => {
-      console.log("socket connected");
-    };
-    
-    socket.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        setLiveOrder(data.message);
-        setOrder({ ...liveOrder, newOrders: [...liveOrder.newOrders, data.message] });
-        setDrawer(true);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    return () => {
-      socket.close();
-    };
+    if (subscriptionURL) {
+      const socket = new WebSocket(`${process.env.NEXT_PUBLIC_SOCKET}${subscriptionURL}/`);
+      
+      socket.onopen = () => {
+        console.log("socket connected");
+      };
+      
+      socket.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          setLiveOrder(data.message);
+          setOrder({ ...liveOrder, newOrders: [...liveOrder.newOrders, data.message] });
+          setDrawer(true);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+  
+      return () => {
+        socket.close();
+      };
+    }
   }, [subscriptionURL, liveOrder, setOrder]);
 
   const printRef = useRef();
@@ -127,7 +129,9 @@ export function NewOrder() {
               <div className="hidden">
                 <InvoiceTemplate ref={printRef} />
               </div>
-              <Button className="w-full">Start Preparing</Button>
+              <Link href="/orders">
+                <Button className="w-full">Start Preparing</Button>
+              </Link>
             </div>
           </div>
         )}

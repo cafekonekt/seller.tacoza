@@ -5,7 +5,7 @@ import { notFound, redirect } from "next/navigation";
 
 export async function getAddons() {
   const user = await getSession();
-  const response = await apiGet("/api/shop/addons", {
+  const response = await apiGet("/api/shop/addon-categories", {
     headers: {
       Authorization: `Bearer ${user?.tokens?.access}`,
     },

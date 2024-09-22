@@ -2,7 +2,6 @@
 import { getSession } from "@/lib/auth/session";
 import { apiPost } from "@/handlers/apiHandler";
 import { revalidatePath } from "next/cache";
-import { notFound } from "next/navigation";
 
 export async function createArea(prevState, formData) {
   const user = await getSession();
@@ -16,7 +15,7 @@ export async function createArea(prevState, formData) {
       Authorization: `Bearer ${user?.tokens?.access}`,
     },
   });
-  if (!response) {
+  if (response.status === 404 || response.status === 401){
     return { message: "Error Creating Area", status: "destructive" };
   }
   revalidatePath("/table");

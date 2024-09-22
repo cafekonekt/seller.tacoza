@@ -53,14 +53,14 @@ export function Header() {
               <span className="sr-only">Restory</span>
             </Link>
             <Link
-              href="#"
+              href="/"
               className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
             >
               <Home className="h-5 w-5" />
               Dashboard
             </Link>
             <Link
-              href="#"
+              href="/orders"
               className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
             >
               <span className="relative flex h-3 w-3">

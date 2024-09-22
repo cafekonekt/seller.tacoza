@@ -7,9 +7,7 @@ import {
   Mail,
   MoreVertical,
 } from "lucide-react";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -31,7 +29,6 @@ import {
   PaginationContent,
   PaginationItem,
 } from "@/components/ui/pagination";
-
 import {
   Timeline,
   TimelineContent,
@@ -40,9 +37,9 @@ import {
   TimelineItem,
   TimelineLine,
 } from "@/components/ui/timeline";
-
 import { Separator } from "@/components/ui/separator";
 import { getOrder } from "@/lib/orders/getOrder";
+import Link from "next/link";
 
 export default async function Dashboard({ params }) {
   const order = await getOrder(params.order_id);
@@ -75,7 +72,7 @@ export default async function Dashboard({ params }) {
               <Button size="sm" variant="outline" className="h-8 gap-1">
                 <Clock className="h-3.5 w-3.5" />
                 <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                  {Math.floor((new Date(order.created_at).getTime() - new Date(order.updated_at).getTime())/(1000 * 60))} Minutes
+                  {Math.floor((new Date(order.updated_at).getTime() - new Date(order.created_at).getTime())/(1000 * 60))} Minutes
                 </span>
               </Button>
               <DropdownMenu>
@@ -113,19 +110,19 @@ export default async function Dashboard({ params }) {
               <ul className="grid gap-3">
                 <li className="flex items-center justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>$299.00</span>
+                  <span>INR {order.total}</span>
                 </li>
-                <li className="flex items-center justify-between">
+                {/* <li className="flex items-center justify-between">
                   <span className="text-muted-foreground">Shipping</span>
                   <span>$5.00</span>
-                </li>
+                </li> */}
                 <li className="flex items-center justify-between">
                   <span className="text-muted-foreground">Tax</span>
-                  <span>$25.00</span>
+                  <span>INR {order.total*0.05}</span>
                 </li>
                 <li className="flex items-center justify-between font-semibold">
                   <span className="text-muted-foreground">Total</span>
-                  <span>$329.00</span>
+                  <span>INR {order.total}</span>
                 </li>
               </ul>
             </div>
@@ -152,18 +149,18 @@ export default async function Dashboard({ params }) {
               <dl className="grid gap-3">
                 <div className="flex items-center justify-between">
                   <dt className="text-muted-foreground">Customer</dt>
-                  <dd>Liam Johnson</dd>
+                  <dd>{order.user.name}</dd>
                 </div>
                 <div className="flex items-center justify-between">
                   <dt className="text-muted-foreground">Email</dt>
                   <dd>
-                    <a href="mailto:">liam@acme.com</a>
+                    <Link href="mailto:">{order.user.email}</Link>
                   </dd>
                 </div>
                 <div className="flex items-center justify-between">
                   <dt className="text-muted-foreground">Phone</dt>
                   <dd>
-                    <a href="tel:">+1 234 567 890</a>
+                    <Link href="tel:">{order.user.phone_number}</Link>
                   </dd>
                 </div>
               </dl>
@@ -208,10 +205,10 @@ export default async function Dashboard({ params }) {
           <Card className="flex gap-2 p-4">
             <Avatar>
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>HA</AvatarFallback>
+              <AvatarFallback>{ order.user.name }</AvatarFallback>
             </Avatar>
             <div className="flex flex-col gap-1">
-              <div className="font-semibold">{ order.user }</div>
+              <div className="font-semibold">{ order.user.name }</div>
               <p className="text-muted-foreground">Customer</p>
               <Button size="sm" variant="outline">
                 <Mail className="h-4 w-4 mr-2" /> Email
@@ -220,7 +217,6 @@ export default async function Dashboard({ params }) {
           </Card>
           <Card className="h-full">
             <CardHeader className="text-lg font-bold">
-              {" "}
               Status History
             </CardHeader>
             <CardContent className="">
