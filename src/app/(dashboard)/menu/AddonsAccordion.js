@@ -10,6 +10,16 @@ import { TabsContent } from "@/components/ui/tabs";
 import { EllipsisVertical, SquareDot, Star } from "lucide-react";
 import { useMenuContext } from "@/context/MenuContext";
 import { AddCategory } from "./MenuAccordion";
+import Image from "next/image";
+import { Switch } from "@/components/ui/switch";
+import { useState } from "react";
+
+// utils
+const iconMap = {
+  veg: "/veg.svg",
+  nonveg: "/non-veg.svg",
+  egg: "/egg.svg",
+};
 
 // Recursive component to render categories and add-on items
 export function AddonCategoryComponent({ category }) {
@@ -31,23 +41,34 @@ export function AddonCategoryComponent({ category }) {
 
 export function AddonItemComponent({ item }) {
   const { toggleItemStockStatus, toggleItemFeaturedStatus, handleItemClick } = useMenuContext();
-  
+  const [inStock, setInStock] = useState(item.in_stock);
+
+  const toggleStock = () => {
+    setInStock(!inStock);
+    toggleItemStockStatus(item);
+  }
+
   return (
-    <div 
+    <div
       className="grid grid-cols-4 w-full hover:shadow-inner p-4"
       onClick={() => handleItemClick(item, "addons")}
     >
       <div className="col-span-2">
         <span className="flex items-center font-bold">
-          <SquareDot className={`w-4 h-4 mr-2 ${item.statusColor}`} />
+          <Image
+            src={iconMap[item.addon_type]}
+            alt="Dash"
+            height="16"
+            width="16"
+            className="mr-2"
+          />
           {item.name}
         </span>
         <p className="text-sm text-muted-foreground">{item.description}</p>
       </div>
       <p className="font-bold col-span-1 text-center">{item.price}</p>
       <div className="flex items-center gap-2 col-span-1 justify-end">
-        <Star className="w-6 h-6 text-gray-500 hover:fill-yellow-300" />
-        <EllipsisVertical className="w-6 h-6 text-gray-500" />
+        <Switch onClick={toggleStock} checked={inStock} />
       </div>
     </div>
   );
@@ -55,7 +76,7 @@ export function AddonItemComponent({ item }) {
 
 export function AddonsAccordion({ categories }) {
   const { handleAddItem } = useMenuContext();
-  
+
   return (
     <TabsContent value="addons" className="">
       <AddCategory />

@@ -1,4 +1,5 @@
 'use client';
+import { useState } from "react";
 import { useMenuContext } from "@/context/MenuContext";
 import {
   Accordion,
@@ -18,6 +19,13 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Image from "next/image";
+// utils
+const iconMap = {
+  veg: "/veg.svg",
+  nonveg: "/non-veg.svg",
+  egg: "/egg.svg",
+};
 
 export function AddCategory() {
   return (
@@ -45,6 +53,18 @@ export function AddCategory() {
 
 function MenuItemComponent({ item }) {
   const { toggleItemStockStatus, toggleItemFeaturedStatus, handleItemClick } = useMenuContext();
+  const [isFeatured, setIsFeatured] = useState(item.featured);
+  const [inStock, setInStock] = useState(item.in_stock);
+
+  const toggleFeatured = () => {
+    setIsFeatured(!isFeatured);
+    toggleItemFeaturedStatus(item);
+  }
+  const toggleStock = () => {
+    setInStock(!inStock);
+    toggleItemStockStatus(item);
+  }
+
   return (
     <div
       className="grid grid-cols-4 w-full hover:shadow-sm p-4 border-b"
@@ -52,16 +72,21 @@ function MenuItemComponent({ item }) {
     >
       <div className="col-span-2">
         <span className="flex items-center font-bold cursor-pointer">
-          <SquareDot className={`w-4 h-4 mr-2 ${item.status_color}`} />
+          <Image
+            src={iconMap[item.food_type]}
+            alt="Dash"
+            height="16"
+            width="16"
+            className="mr-2"
+          />
           {item.name}
         </span>
         <p className="text-sm text-muted-foreground">{item.description}</p>
       </div>
       <p className="font-bold col-span-1 text-center">{item.price}</p>
       <div className="flex items-center gap-2 col-span-1 justify-end">
-        <Switch onClick={() => toggleItemStockStatus()} />
-        <Star className="w-6 h-6 text-gray-500 hover:fill-yellow-300" />
-        <EllipsisVertical className="w-6 h-6 text-gray-500" />
+        <Switch onClick={toggleStock} checked={inStock} />
+        <Star className={`w-6 h-6 text-gray-500 ${isFeatured ? 'fill-yellow-300' : ''}`} onClick={toggleFeatured} />
       </div>
     </div>
   );
@@ -80,15 +105,15 @@ function CategoryComponent({ category }) {
           {Array.isArray(category.sub_categories) &&
             category.sub_categories.length > 0
             ? // If subcategories exist, recursively render them
-            category.sub_categories.map((subCategory) => (
+            category.sub_categories.map((subCategory, key) => (
               <CategoryComponent
-                key={subCategory.name}
+                key={key}
                 category={subCategory}
               />
             ))
             : // If no subcategories, render the menu items
-            category.food_items.map((item) => (
-              <MenuItemComponent key={item.name} item={item} />
+            category.food_items.map((item, key) => (
+              <MenuItemComponent key={key} item={item} />
             ))}
         </AccordionContent>
       </AccordionItem>
@@ -97,14 +122,15 @@ function CategoryComponent({ category }) {
 }
 
 export function MenuAccordion({ categories }) {
-  console.log(categories, "food items");
+  const { handleAddItem } = useMenuContext();
+
   return (
     <TabsContent value="items" className="relative">
       <AddCategory />
-      <Button className="ml-2">Add Item</Button>
+      <Button className="ml-2" onClick={() => handleAddItem("menu")}>Add Item</Button>
       {categories &&
-        categories.map((category) => (
-          <CategoryComponent key={category.name} category={category} />
+        categories.map((category, key) => (
+          <CategoryComponent key={key} category={category} />
         ))}
     </TabsContent>
   );

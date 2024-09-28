@@ -31,31 +31,27 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { GalleryDialog } from "./gallery";
 import { VariantsSelect, AddonsSelect } from "./forvariants";
+import Image from "next/image";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+// utils
+const iconMap = {
+  veg: "/veg.svg",
+  nonveg: "/non-veg.svg",
+  egg: "/egg.svg",
+};
 
 export function EditForm({ foodCategory, addonCategory, type }) {
-  const { selectedItem, handleSave, editType, handleItemClick } =
-    useMenuContext();
+  const { selectedItem, handleSave, handleUpdate, handleItemClick } = useMenuContext();
 
-  const [formData, setFormData] = useState(
-    selectedItem || {
-      name: "",
-      food_category: "",
-      price: "",
-      description: "",
-      type: type || "menu",
-    },
-  );
-  
-  console.log(formData, 'formData');
+  const [formData, setFormData] = useState(selectedItem);
+
+  useEffect(() => {
+    setFormData(selectedItem);
+  }, [selectedItem]);
 
   const selectedCategory = foodCategory.filter(
     (cat) => cat.name === formData?.food_category,
   )[0];
-
-  useEffect(() => {
-    setFormData(selectedItem);
-    console.log(selectedItem);
-  }, [selectedItem]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -66,12 +62,20 @@ export function EditForm({ foodCategory, addonCategory, type }) {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const handleSaveChanges = () => {
+    if (formData.mode === "add") {
+      handleSave({ ...formData }, type); // Pass type to handleSave
+    } else {
+      handleUpdate({ ...formData }, type); // Pass type to handleUpdate
+    }
+  };
+
   return formData ? (
     <div className="col-span-1 p-8 bg-accent overflow-y-scroll">
       <div className="flex items-center justify-between my-3">
         <Input
           className="text-lg w-fit bg-white"
-          placeholder={editType === "menu" ? "Item Name" : "Addon Name"} // Adjust placeholder based on type
+          placeholder={formData.type === "menu" ? "Item Name" : "Addon Name"} // Adjust placeholder based on type
           value={formData.name || ""}
           name="name"
           onChange={handleInputChange}
@@ -90,15 +94,30 @@ export function EditForm({ foodCategory, addonCategory, type }) {
           Food Type <CircleHelp className="ml-2 h-5 w-5" />
         </h2>
         <Card className="flex gap-4 p-4">
-          <Button variant="outline">
-            <SquareDot className="w-4 h-4 mr-2 text-green-500" /> Veg
-          </Button>
-          <Button variant="outline">
-            <SquareDot className="w-4 h-4 mr-2 text-yellow-500" /> Egg
-          </Button>
-          <Button variant="outline">
-            <SquareDot className="w-4 h-4 mr-2 text-red-500" /> Non-Veg
-          </Button>
+          <ToggleGroup
+            type="single"
+            variant="outline"
+            className="flex gap-4 p-4"
+            value={formData.type==="menu" ? formData.food_type : formData.addon_type}
+          // onValueChange={(value) => setFoodTypeFilter(value)} // Set filter state
+          >
+            {Object.keys(iconMap).map((type, key) => (
+              <ToggleGroupItem
+                key={key}
+                value={type}
+                aria-label="Veg Filter"
+                className="gap-2 px-4 data-[state=on]:bg-gray-100 align-left"
+              >
+                <Image
+                  src={iconMap[type]}
+                  alt="Veg"
+                  height="16"
+                  width="16"
+                />
+                <span>{type.charAt(0).toUpperCase() + type.slice(1)}</span>
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
         </Card>
       </div>
 
@@ -165,8 +184,8 @@ export function EditForm({ foodCategory, addonCategory, type }) {
                 <SelectValue placeholder="Select Dish Category" />
               </SelectTrigger>
               <SelectContent value={formData.category}>
-                {foodCategory.map((category) => (
-                  <SelectItem value={category.id} key={category.id}>
+                {foodCategory.map((category, key) => (
+                  <SelectItem value={category.id} key={key}>
                     {category.name}
                   </SelectItem>
                 ))}
@@ -177,16 +196,18 @@ export function EditForm({ foodCategory, addonCategory, type }) {
       </div>
 
       {/* Images */}
-      {editType === "menu" && (
+      {formData.type === "menu" && (
         <div className="mt-4">
           <h2 className="flex items-center font-semibold text-base mb-1">
             Images <CircleHelp className="ml-2 h-5 w-5" />
           </h2>
           <Card className="flex gap-4 p-4">
             <div className="flex items-center justify-center w-24 h-20 border rounded-lg">
-              <img
-                src="https://media-assets.swiggy.com/swiggy/image/upload/f_auto,q_auto,fl_lossy/01cf72fa714c88dfe8d77145d6cf1091"
+              <Image
+                src={"/pizza.jpg"}
                 alt="Restaurant"
+                width={300}
+                height={300}
                 className="w-full h-full object-cover rounded-lg"
               />
             </div>
@@ -202,7 +223,6 @@ export function EditForm({ foodCategory, addonCategory, type }) {
               <ImagePlus className="w-8 h-8 " />
               Upload
             </label>
-            <GalleryDialog />
           </Card>
         </div>
       )}
@@ -226,7 +246,7 @@ export function EditForm({ foodCategory, addonCategory, type }) {
       </div>
 
       {/* Customization */}
-      {editType === "menu" && (
+      {formData.type === "menu" && (
         <div className="mt-4">
           <h2 className="flex items-center font-semibold text-base mb-1">
             Customization <CircleHelp className="ml-2 h-5 w-5" />
@@ -238,9 +258,9 @@ export function EditForm({ foodCategory, addonCategory, type }) {
               <CardContent>
                 {formData.variants &&
                   formData.variants.type?.length > 0 &&
-                  formData.variants.type.map((variant) => (
+                  formData.variants.type.map((variant, key) => (
                     <Badge
-                      key={variant.name}
+                      key={key}
                       className="m-1"
                     >{`${variant.name} | ₹${variant.price}`}</Badge>
                   ))}
@@ -260,7 +280,7 @@ export function EditForm({ foodCategory, addonCategory, type }) {
       )}
 
       {/* Dish Details */}
-      {editType === "menu" && (
+      {formData.type === "menu" && (
         <div className="mt-4">
           <h2
             htmlFor="dish-details"
@@ -385,11 +405,12 @@ export function EditForm({ foodCategory, addonCategory, type }) {
           </Card>
         </div>
       )}
+
       <Button
         className="mt-4"
-        onClick={() => handleSave({ ...formData }, editType)}
+        onClick={handleSaveChanges} // Use the new save function
       >
-        Save Changes
+        {formData.mode === "add" ? "Add Item" : "Update Item"}
       </Button>
     </div>
   ) : (
