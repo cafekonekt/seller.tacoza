@@ -27,8 +27,6 @@ export default function LiveOrder() {
 
     // Update the order status on the server
     try {
-      await updateOrderStatus(orderId, STATUS[toStatus]); // Update status via API
-
       // Update the local state after a successful API response
       setOrder((prev) => {
         const fromItems = prev[fromStatus].filter(
@@ -46,6 +44,8 @@ export default function LiveOrder() {
           [fromStatus]: fromItems,
         };
       });
+      
+      await updateOrderStatus(orderId, STATUS[toStatus]); // Update status via API
     } catch (error) {
       console.error("Error updating order status:", error);
     }

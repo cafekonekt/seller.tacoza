@@ -5,15 +5,15 @@ import { notFound, redirect } from "next/navigation";
 
 export async function getMenu() {
   const user = await getSession();
-  const response = await apiGet("/api/shop/food-items/", {
-    headers: {
-      Authorization: `Bearer ${user?.tokens?.access}`,
-    },
-  });
-  if (response.status === 404) return notFound();
-  if (response.status === 401) {
-    logout();
-    redirect("/login");
+  try {
+    const response = await apiGet("/api/shop/food-items/", {
+      headers: {
+        Authorization: `Bearer ${user?.tokens?.access}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error(error);
+    return null;
   }
-  return response;
 }
