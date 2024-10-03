@@ -13,7 +13,8 @@ import { notFound } from "next/navigation";
 export default async function Menu() {
   const items = await getMenu();
   const addons = await getAddons();
-  console.log(addons, null || 0);
+  console.log(items, null || 0);
+  
   if (items?.status === 401 || addons?.status === 400) notFound();
   if (items?.status === 404 || addons?.status === 404) notFound();
 
