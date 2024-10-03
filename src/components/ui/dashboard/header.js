@@ -1,14 +1,22 @@
+"use client";
 import Link from "next/link";
 import {
+  BadgePercent,
   Bell,
+  Briefcase,
+  ChefHat,
   CircleUser,
+  Grid2X2,
   Home,
   LineChart,
   Menu,
-  Package,
-  Package2,
+  QrCode,
+  Ratio,
+  Salad,
   Search,
   ShoppingCart,
+  Store,
+  TvMinimal,
   Users,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -32,8 +40,39 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Image from "next/image";
 import LogoutButton from "./LogoutButton";
+import { usePathname } from "next/navigation";
+import { useOrderContext } from "@/context/OrderContext";
 
 export function Header() {
+  const pathname = usePathname();
+  const { liveOrder } = useOrderContext();
+
+  const navItems = [
+    { href: "/", label: "Dashboard", icon: Home },
+    {
+      href: "#",
+      label: "POS",
+      icon: TvMinimal,
+      badge: "Coming Soon",
+    },
+    {
+      href: "/orders",
+      label: "Live Orders",
+      icon: ShoppingCart,
+      badgeCount: liveOrder?.newOrders?.length
+        ? liveOrder.newOrders.length
+        : "",
+    },
+    { href: "/orders/all", label: "Orders", icon: ShoppingCart },
+    { href: "/menu", label: "Menu", icon: Salad },
+    { href: "/table", label: "Tables", icon: Ratio },
+    { href: "/offers", label: "Offers", icon: BadgePercent },
+    { href: "/restaurant", label: "Outlet", icon: Store },
+    { href: "/marketing", label: "Marketing", icon: Briefcase },
+    { href: "#", label: "Customers", icon: Users, badge: "Coming Soon" },
+    { href: "#", label: "Finance", icon: LineChart, badge: "Coming Soon" },
+  ];
+
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <Sheet>
@@ -44,65 +83,41 @@ export function Header() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="flex flex-col">
-          <nav className="grid gap-2 text-lg font-medium">
-            <Link
-              href="#"
-              className="flex items-center gap-2 text-lg font-semibold"
-            >
-              <Package2 className="h-6 w-6" />
-              <span className="sr-only">Restory</span>
-            </Link>
-            <Link
-              href="/"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-            >
-              <Home className="h-5 w-5" />
-              Dashboard
-            </Link>
-            <Link
-              href="/orders"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
-            >
-              <span className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-              </span>
-              Live Orders
-              <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                2
-              </Badge>
-            </Link>
-            <Link
-              href="#"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              Orders
-              <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                6
-              </Badge>
-            </Link>
-            <Link
-              href="#"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-            >
-              <Package className="h-5 w-5" />
-              Products
-            </Link>
-            <Link
-              href="#"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-            >
-              <Users className="h-5 w-5" />
-              Customers
-            </Link>
-            <Link
-              href="#"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-            >
-              <LineChart className="h-5 w-5" />
-              Analytics
-            </Link>
+          <div className="flex h-14 items-center border-b lg:h-[60px] lg:px-6">
+            <Image src="/image.png" width={100} height={30} alt="tacoza" />
+          </div>
+          <nav className="grid items-start text-sm font-medium lg:px-4">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${
+                    isActive ? "bg-muted text-primary" : ""
+                  }`}
+                >
+                  <item.icon className="h-4 w-4" />
+                  {item.label}
+                  {item.badge && (
+                    <Badge
+                      variant="outline"
+                      className="ml-auto flex h-6 shrink-0 items-center justify-center rounded-full"
+                    >
+                      {item.badge}
+                    </Badge>
+                  )}
+                  {item.badgeCount && (
+                    <div className="ml-auto relative flex h-6 w-6">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-300 opacity-75" />
+                      <Badge className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green-500 relative">
+                        {item.badgeCount}
+                      </Badge>
+                    </div>
+                  )}
+                </Link>
+              );
+            })}
           </nav>
           <div className="mt-auto">
             <Card className="hidden">
@@ -136,7 +151,7 @@ export function Header() {
           </div>
         </SheetContent>
       </Sheet>
-      <div className="w-full flex-1">
+      <div className="hidden md:w-full md:flex-1">
         <form>
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
