@@ -12,7 +12,6 @@ export const metadata = {
 
 export default async function Manage() {
   const outlet = await getOutlet();
-  console.log(outlet);
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 overflow-y-scroll">
       <div className="flex items-center">
@@ -25,8 +24,8 @@ export default async function Manage() {
           <TabsTrigger value="documents">Documnets</TabsTrigger>
           <TabsTrigger value="payment">Payments</TabsTrigger>
         </TabsList>
-        <RestaurantManagement />
-        <RestaurantGallery />
+        <RestaurantManagement outlet={outlet} />
+        <RestaurantGallery outlet={outlet} />
         <RestaurantDocument />
         <RestaurantPayment />
       </Tabs>

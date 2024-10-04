@@ -104,36 +104,100 @@ export function OutletTimings() {
   );
 }
 
-export function RestaurantManagement() {
-  const [date, setDate] = React.useState(new Date());
+export function RestaurantManagement({ outlet }) {
+  const [formData, setFormData] = React.useState(outlet || {
+    name: "",
+    description: "",
+    address: "",
+    services: [],
+    email: "",
+    phone: "",
+  });
+  const [isChanged, setIsChanged] = React.useState(false);
+
+  const handleCheckboxChange = (e) => {
+    console.log("Checkbox changed", e);
+    const { id, checked } = e.target;
+    setFormData((prevData) => {
+      const services = checked
+        ? [...prevData.services, id]
+        : prevData.services.filter((service) => service !== id);
+      return {
+        ...prevData,
+        services,
+      };
+    });
+    setIsChanged(true);
+  };
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+    setIsChanged(true);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission logic here
+    console.log("Updated data:", formData);
+    setIsChanged(false);
+  };
 
   return (
     <TabsContent value="info">
       <Card className="p-4">
         <div className="grid grid-cols-3">
-          <div className="grid md:col-span-1 w-full max-w-sm items-center gap-3">
+          <form
+            className="grid md:col-span-1 w-full max-w-sm items-center gap-3"
+            onSubmit={handleSubmit}
+          >
             <p className="font-bold mb-2">Restaurant Details</p>
             <Label htmlFor="name">Restaurant Name</Label>
-            <Input type="text" id="name" placeholder="Sagar Gaire" />
+            <Input
+              type="text"
+              id="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Sagar Gaire"
+            />
 
             <Label htmlFor="description">Restaurant Description</Label>
             <Textarea
-              placeholder="Type your description here."
               id="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Type your description here."
             />
 
             <Label htmlFor="address">Restaurant Address</Label>
             <Input
               type="text"
               id="address"
+              value={formData.address}
+              onChange={handleChange}
               placeholder="6 Yukon Drive Raeford, NC 28376"
             />
 
             <Label htmlFor="email">Email</Label>
-            <Input type="email" id="email" placeholder="Email" />
+            <Input
+              type="email"
+              id="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Email"
+            />
 
-            <Label htmlFor="email">Phone</Label>
-            <Input type="phone" id="email" placeholder="+91-8877665522" />
+            <Label htmlFor="phone">Phone</Label>
+            <Input
+              type="phone"
+              id="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="+91-8877665522"
+            />
 
             <div className="mt-4">
               <h2 className="flex items-center font-semibold text-base mb-1">
@@ -141,28 +205,40 @@ export function RestaurantManagement() {
               </h2>
               <Card className="flex gap-2 p-4">
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="dineIn" />
+                  <Checkbox
+                    id="dine_in"
+                    checked={formData.services.includes("dine_in")}
+                    onChange={handleCheckboxChange}
+                  />
                   <label
-                    htmlFor="dineIn"
-                    className=" flex gap-2 items-center leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    htmlFor="dine_in"
+                    className="flex gap-2 items-center leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     <HandPlatter /> DineIn
                   </label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="takeaway" />
+                  <Checkbox
+                    id="takeaway"
+                    checked={formData.services.includes("takeaway")}
+                    onChange={handleCheckboxChange}
+                  />
                   <label
                     htmlFor="takeaway"
-                    className=" flex gap-2 items-center leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    className="flex gap-2 items-center leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     <ShoppingBag /> Takeaway
                   </label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox />
+                  <Checkbox
+                    id="delivery"
+                    checked={formData.services.includes("delivery")}
+                    onChange={handleCheckboxChange}
+                  />
                   <label
                     htmlFor="delivery"
-                    className=" flex gap-2 items-center leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    className="flex gap-2 items-center leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     <Truck /> Delivery
                   </label>
@@ -180,7 +256,13 @@ export function RestaurantManagement() {
                 <LocateFixed className="w-4 h-4 mr-2" /> Select Location
               </Button>
             </div>
-          </div>
+
+            {isChanged && (
+              <Button type="submit" className="mt-4">
+                Update Information
+              </Button>
+            )}
+          </form>
 
           <div className="flex flex-col md:col-span-1 w-full max-w-sm gap-3">
             <p className="font-bold mb-2">Orders</p>
