@@ -12,7 +12,7 @@ export const useOrderContext = () => useContext(OrderContext);
 // Context provider component
 export const OrderProvider = ({ children }) => {
   const [liveOrder, setOrder] = useState({
-    newOrders: [],
+    new: [],
     preparing: [],
     completed: [],
   });
