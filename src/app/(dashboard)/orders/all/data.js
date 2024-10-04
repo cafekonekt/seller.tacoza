@@ -29,7 +29,7 @@ export const columns = [
   {
     accessorKey: "order_id",
     header: "Order ID",
-    cell: ({ row }) => <div>{row.getValue("order_id")}</div>,
+    cell: ({ row }) => <div>{row.getValue("order_id")?.split("-")?.[0]}</div>,
   },
   {
     accessorKey: "user",

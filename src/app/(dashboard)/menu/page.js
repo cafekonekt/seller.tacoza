@@ -1,4 +1,3 @@
-"use server";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MenuAccordion, AddCategory } from "./MenuAccordion";
 import { AddonsAccordion } from "./AddonsAccordion";
@@ -9,10 +8,15 @@ import { Badge } from "@/components/ui/badge";
 import { getMenu } from "@/lib/menu/getMenu";
 import { getAddons } from "@/lib/menu/getAddons";
 import Gallery from "./gallery";
+import { notFound } from "next/navigation";
 
 export default async function Menu() {
   const items = await getMenu();
   const addons = await getAddons();
+  console.log(items, null || 0);
+  
+  if (items?.status === 401 || addons?.status === 400) notFound();
+  if (items?.status === 404 || addons?.status === 404) notFound();
 
   return (
     <MenuProvider>
@@ -26,13 +30,16 @@ export default async function Menu() {
                   <TabsTrigger value="items">
                     Items
                     <Badge className="ml-1 flex bg-muted-foreground shrink-0 items-center justify-center rounded-full">
-                      {items.length}
+                      {items?.map(item =>
+                        item.sub_categories && item.sub_categories.length > 0
+                          ? item.sub_categories.reduce((total, subCategory) => total + (subCategory.food_items?.length || 0), 0)
+                          : (item.food_items?.length || 0))}
                     </Badge>
                   </TabsTrigger>
                   <TabsTrigger value="addons">
                     Add-ons
                     <Badge className="ml-1 flex bg-muted-foreground shrink-0 items-center justify-center rounded-full">
-                      {addons.length}
+                      {addons?.reduce((total, addonCategory) => total + (addonCategory.addons?.length || 0), 0)}
                     </Badge>
                   </TabsTrigger>
                   <TabsTrigger value="combo">

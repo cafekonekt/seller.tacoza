@@ -1,6 +1,9 @@
 'use client';
+import { addItem } from '@/lib/menu/addItem';
+import { updateItem } from '@/lib/menu/updateItem';
 // MenuContext.js
 import React, { createContext, useState, useContext } from 'react';
+
 
 // Create the context
 const MenuContext = createContext();
@@ -12,64 +15,82 @@ export const useMenuContext = () => useContext(MenuContext);
 export const MenuProvider = ({ children }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [menuItems, setMenuItems] = useState([]); // To manage all menu items
-  const [isNewItem, setIsNewItem] = useState(false); // To manage new item creation
-  const [featuredItems, setFeaturedItems] = useState([]); // To manage featured items
   const [addonItems, setAddonItems] = useState([]); // Manage addon items
-  const [formType, setType] = useState("menu"); // New: To differentiate between item types
-  
+
   const handleAddItem = (type = "menu") => {
-    setSelectedItem(null); // No selected item when adding a new one
-    setType(type);       // Set the type to "menu"
-    setIsNewItem(true);    // Switch to "add" mode
+    setSelectedItem({
+      name: "",
+      food_category: "",
+      price: "",
+      description: "",
+      type: type || "menu",
+      mode: "add",
+    });
   };
-  
+
   // Function to handle item selection
   const handleItemClick = (item, type = "menu") => {
-    setSelectedItem(item);
-    setType(type);
+    setSelectedItem({
+      ...item,
+      type: type || "menu",
+      mode: "edit",
+    });
   };
 
   // Function to toggle item in stock status
   const toggleItemStockStatus = (itemId) => {
-    setMenuItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === itemId ? { ...item, inStock: !item.inStock } : item
-      )
-    );
+    let timer;
+    return (item) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        updateItem({
+          slug: item.slug,
+          in_stock: !item.in_stock,
+        });
+      }, 300); // 300ms debounce delay
+    };
   };
 
   // Function to toggle item featured status
-  const toggleItemFeaturedStatus = (itemId) => {
-    setFeaturedItems((prevItems) =>
-      prevItems.includes(itemId)
-        ? prevItems.filter((id) => id !== itemId)
-        : [...prevItems, itemId]
-    );
-  };
+  const toggleItemFeaturedStatus = (() => {
+    let timer;
+    return (item) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        updateItem({
+          slug: item.slug,
+          featured: !item.featured,
+        });
+      }, 300); // 300ms debounce delay
+    };
+  })();
 
   // Function to save the edited item details
-  const handleSave = (updatedItem, type="menu") => {
-    console.log(updatedItem, "Updated Item");
-    // setMenuItems((prevItems) =>
-    //   prevItems.map((item) =>
-    //     item.id === updatedItem.id ? updatedItem : item
-    //   )
-    // );
-    // setSelectedItem(null); // Optionally reset selected item after saving
+  const handleSave = (item, type = "menu") => {
+    if (type === "menu") {
+      console.log(item, "Updated Item");
+      // addItem(item);
+    } else {
+      // Handle addon saving logic here
+      setAddonItems((prevItems) =>
+        prevItems.map((item) =>
+          item.id === item.id ? item : item
+        )
+      );
+    }
+    setSelectedItem(null); // Optionally reset selected item after saving
   };
 
   return (
     <MenuContext.Provider
       value={{
         selectedItem,
-        formType,
         handleItemClick,
         handleAddItem,
         toggleItemStockStatus,
         toggleItemFeaturedStatus,
         handleSave,
         menuItems,
-        featuredItems,
       }}
     >
       {children}
