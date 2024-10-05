@@ -60,14 +60,15 @@ export default function LiveOrder() {
     event.dataTransfer.setData("fromStatus", fromStatus);
   };
 
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery('(min-width: 768px)', { noSsr: true });
+
   if (isDesktop) {
     return (
-      <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 overflow-auto">
+      <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 overflow-auto" suppressHydrationWarning>
         <div className="grid grid-cols-3 gap-4">
-          {Object.keys(liveOrder).map((status) => (
+          {Object.keys(liveOrder).map((status, key) => (
             <div
-              key={status}
+              key={key}
               className="flex flex-col gap-4"
               onDrop={(event) => onDrop(event, status)}
               onDragOver={onDragOver}
@@ -93,7 +94,7 @@ export default function LiveOrder() {
     );
   }
   return (
-    <main className="w-screen p-4 overflow-auto">
+    <main className="w-screen p-4 overflow-auto" suppressHydrationWarning>
       <Tabs defaultValue="new">
         <TabsList>
           {Object.keys(liveOrder).map((status, key) => (

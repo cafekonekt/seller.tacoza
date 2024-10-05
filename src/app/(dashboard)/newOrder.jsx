@@ -82,7 +82,7 @@ export function NewOrder() {
                 </span>
               </span>
               <div className="flex flex-col items-end text-base font-medium">
-                1st Order by {order.user.name ? order.user.name : "Guest"}
+                Order by {order.user.name ? order.user.name : "Guest"}
                 <div className="flex items-center border bg-muted px-2 rounded-full w-fit mt-2 animate-pulse">
                   <UtensilsCrossed className="w-5 h-5 mr-2" />
                   {order.order_type.toUpperCase()}
@@ -98,7 +98,7 @@ export function NewOrder() {
                   {item.food_item.name}
                 </p>
                 <span className="flex items-center text-base font-medium">
-                  ₹ {item.totalPrice}
+                  ₹{item.totalPrice}
                 </span>
               </div>
             ))}
@@ -107,12 +107,12 @@ export function NewOrder() {
               <p className="text-base">
                 Total Bill
                 <span className="ml-2 px-2 text-sm font-semibold border border-blue-500 text-blue-500 bg-blue-100 rounded-lg">
-                  PAID
+                  {order.payment_status.toUpperCase()}
                 </span>
               </p>
 
               <span className="flex items-center text-base font-medium">
-                ₹ {order.total}
+                ₹{order.total}
               </span>
             </div>
             <Separator />
