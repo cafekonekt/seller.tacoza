@@ -59,7 +59,7 @@ export const OrderCard = ({ order, status, changeOrderStatus, onDragStart }) => 
                             {item.addons.map((addon) => addon.name).join(", ")}
                         </span>}
                         <span className="flex items-center text-base font-medium">
-                            ₹ {item.totalPrice}
+                            ₹{item.totalPrice}
                         </span>
                     </div>
                 ))}
@@ -72,7 +72,7 @@ export const OrderCard = ({ order, status, changeOrderStatus, onDragStart }) => 
                         </span>
                     </p>
                     <span className="flex items-center text-base font-medium">
-                        ₹ {order.total}
+                        ₹{order.total}
                     </span>
                 </div>
                 <div className="flex justify-between mt-2">
