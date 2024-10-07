@@ -11,18 +11,18 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast"
 
 function SubmitButton() {
-    const { pending } = useFormStatus();
-    return (
-      <Button type="submit" disabled={pending} className="w-full">
-        Login
-      </Button>
-    );
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" disabled={pending} className="w-full">
+      Login
+    </Button>
+  );
 }
 export function Form({ searchParams }) {
   const [state, formAction] = useActionState(login, { message: null });
   const router = useRouter();
   const { toast } = useToast();
-  
+
   useEffect(() => {
     console.log(state)
     if (state.message) {
@@ -35,7 +35,7 @@ export function Form({ searchParams }) {
       searchParams.next ? router.push(searchParams.next) : router.push("/");
     }
   }, [state, router, searchParams, toast]);
-  
+
   return (
     <form className="grid gap-4" action={formAction}>
       <div className="grid gap-2">

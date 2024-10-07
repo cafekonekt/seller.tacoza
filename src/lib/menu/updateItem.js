@@ -4,6 +4,7 @@ import { apiPut } from "@/handlers/apiHandler";
 import { revalidatePath } from "next/cache";
 
 export async function updateItem(item) {
+    console.log(item, 'item');
     const user = await getSession();
     try {
         const response = await apiPut(`/api/shop/food-items/${item.slug}/`, item, {

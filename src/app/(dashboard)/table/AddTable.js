@@ -62,7 +62,6 @@ export function AddTable({ areas }) {
               Select area and add table.
             </p>
           </div>
-
           <form action={formAction}>
             <Label htmlFor="name">Name</Label>
             <Input
@@ -81,18 +80,23 @@ export function AddTable({ areas }) {
               className="col-span-2 h-8"
             />
             <Label htmlFor="area">Area</Label>
-            <Select id="area" name="area">
+            <Select
+              id="area"
+              name="area"
+              defaultValue={areas[0].id}
+              onValueChange={(e) => {
+                console.log(e);
+              }}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select Area" />
               </SelectTrigger>
               <SelectContent>
-                <SelectGroup>
-                  {areas.map((area) => (
-                    <SelectItem key={area.id} value={area.id}>
-                      {area.name}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
+                {areas.map((area) => (
+                  <SelectItem key={area.id} value={area.id}>
+                    {area.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <SubmitButton />

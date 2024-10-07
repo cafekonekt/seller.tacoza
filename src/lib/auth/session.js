@@ -10,13 +10,10 @@ export async function login(prevState, formData) {
   };
 
   try {
-    const response = await apiPost("/api/auth/login/", user, {
-      headers: {
-        cache: "no-store",
-      },
-    });
-    if (response==401) {
-    return { message: "Invalid email or password", status: "destructive" };
+    const response = await apiPost("/api/auth/login/", user);
+    console.log(response.status, "response");
+    if (response.status === 401) {
+      return { message: "Invalid email or password", status: "destructive" };
     }
     if (response) {
       const cookieStore = cookies();
@@ -28,10 +25,10 @@ export async function login(prevState, formData) {
         httpOnly: true,
         expires,
       });
-      return { message: "Login successful", status: "success" };  
+      return { message: "Login successful", status: "success" };
     }
   } catch (error) {
-    return { message: "Error logging in", status: "destructive" };
+    return { message: "An unexpected error occurred", status: "destructive" };
   }
 }
 
