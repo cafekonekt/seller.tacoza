@@ -3,16 +3,10 @@ import { getSession } from "@/lib/auth/session";
 import { apiPost } from "@/handlers/apiHandler";
 import { revalidatePath } from "next/cache";
 
-export async function createTable(prevState, formData) {
+export async function createTable(formData) {
   const user = await getSession();
-
-  const data = {
-    name: formData.get("name"),
-    capacity: formData.get("capacity"),
-    area: formData.get("area"),
-  };
   try {
-    const response = await apiPost("/api/shop/tables/", data, {
+    const response = await apiPost("/api/shop/tables/", formData, {
       headers: {
         Authorization: `Bearer ${user?.tokens?.access}`,
       },

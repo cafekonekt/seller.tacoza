@@ -1,20 +1,20 @@
 "use server";
 import { getSession } from "@/lib/auth/session";
 import { apiPost } from "@/handlers/apiHandler";
+import { revalidatePath } from "next/cache";
 
-export async function createOffer(prevState, formData) {
+export async function createOffer(formData) {
     const user = await getSession();
-    console.log(formData);
-    return { message: "Offer created successfully", status: "success" };
-    // try {
-    //     const response = await apiPost("/api/shop/discount-coupons/", offer, {
-    //         headers: {
-    //             Authorization: `Bearer ${user?.tokens?.access}`,
-    //         },
-    //     });
-    //     return response;
-    // } catch (error) {
-    //     console.error(error);
-    //     return null;
-    // }
+    try {
+        await apiPost("/api/shop/discount-coupons/", formData, {
+            headers: {
+                Authorization: `Bearer ${user?.tokens?.access}`,
+            },
+        });
+        revalidatePath("/offers");
+        return { message: "Offer created successfully", status: "success" };
+    } catch (error) {
+        console.error(error);
+        return { message: "Error creating offer", status: "destructive" };
+    }
 }

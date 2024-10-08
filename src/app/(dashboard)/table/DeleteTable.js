@@ -1,25 +1,21 @@
-"use client"
-import { useState, useEffect, useRef, startTransition, useActionState } from "react";
+"use client";
 import { Button } from "@/components/ui/button";
-import { deleteTableWithDelay } from "@/lib/table/deleteTable";
-import { useToast } from "@/hooks/use-toast";
 import { Trash } from "lucide-react";
 import { ToastAction } from "@/components/ui/toast";
+import { useState } from "react";
+
+import { useToast } from "@/hooks/use-toast";
+import { deleteTable } from "@/lib/table/deleteTable";
 
 export function DeleteTable({ tableId }) {
     const { toast } = useToast();
-    const timeoutIdRef = useRef(null);
-    const isDeletingRef = useRef(false); // Use a ref to track the `isDeleting` state
-    const [isDeleting, setIsDeleting] = useState(false);
-    const [state, formAction] = useActionState(deleteTableWithDelay, { 
-        message: null
-    });
+    const [isDeleting, setIsDeleting] = useState(false); // Add state for deletion status
 
     const handleDelete = () => {
+        setIsDeleting(true); // Set deleting state to true
+        const timeoutIdRef = { current: null };
+        console.log("Deleting table", tableId);
         // Show toast immediately and start deletion countdown
-        setIsDeleting(true);
-        isDeletingRef.current = true; // Set the ref value immediately
-
         toast({
             title: "Table will be deleted",
             description: "You can undo this action within 5 seconds.",
@@ -27,11 +23,10 @@ export function DeleteTable({ tableId }) {
                 <ToastAction
                     altText="Undo"
                     onClick={() => {
-                        clearTimeout(timeoutIdRef.current); // Cancel deletion
-                        setIsDeleting(false);
-                        isDeletingRef.current = false; // Update the ref value
+                        clearTimeout(timeoutIdRef.current);
+                        setIsDeleting(false); // Reset deleting state
                         toast({
-                            variant: 'success',
+                            variant: "success",
                             title: "Deletion Undone",
                         });
                     }}
@@ -41,27 +36,13 @@ export function DeleteTable({ tableId }) {
             ),
         });
 
-        // Use `startTransition` for deferred UI update
-        timeoutIdRef.current = setTimeout(() => {
-            if (isDeletingRef.current) {
-                startTransition(() => {
-                    formAction(tableId); // Dispatch the action inside `startTransition`
-                });
-            }
+        // Set timeout for deletion
+        timeoutIdRef.current = setTimeout(async () => {
+            console.log("Deleting table", tableId);
+            await deleteTable(tableId);
+            setIsDeleting(false); // Reset deleting state after deletion
         }, 5000);
     };
-
-    useEffect(() => {
-        if (state.message) {
-            toast({
-                variant: state.status,
-                title: state.message,
-            });
-        }
-        setIsDeleting(false); // Reset the `isDeleting` state after deletion
-        // Clean up timeout when component unmounts or if action is undone
-        return () => clearTimeout(timeoutIdRef.current);
-    }, [state, toast]);
 
     return (
         <Button onClick={handleDelete} disabled={isDeleting}>

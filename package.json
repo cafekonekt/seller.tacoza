@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-checkbox": "^1.1.1",
@@ -28,6 +29,7 @@
     "@radix-ui/react-toggle-group": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.2",
     "@react-hook/media-query": "^1.1.1",
+    "@serwist/next": "^9.0.9",
     "@shadcn/ui": "^0.0.4",
     "@tanstack/react-table": "^8.20.5",
     "autoprefixer": "^10.4.20",
@@ -46,16 +48,19 @@
     "react-chartjs-2": "^5.2.0",
     "react-day-picker": "8.10.1",
     "react-dom": "rc",
+    "react-hook-form": "^7.53.0",
     "react-qr-code": "^2.0.15",
     "recharts": "^2.13.0-alpha.4",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.7",
     "postcss": "^8.4.47",
+    "serwist": "^9.0.9",
     "tailwindcss": "^3.4.12"
   },
   "overrides": {

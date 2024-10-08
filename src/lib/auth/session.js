@@ -3,20 +3,16 @@ import { encrypt, decrypt } from "@/lib/auth/util/lib";
 import { cookies } from "next/headers";
 import { apiPost } from "@/handlers/apiHandler";
 
-export async function login(prevState, formData) {
+export async function login(formData) {
   const user = {
-    email: formData.get("email"),
-    password: formData.get("password"),
+    email: formData.email,
+    password: formData.password,
   };
-
   try {
-    const response = await apiPost("/api/auth/login/", user, {
-      headers: {
-        cache: "no-store",
-      },
-    });
-    if (response==401) {
-    return { message: "Invalid email or password", status: "destructive" };
+    const response = await apiPost("/api/auth/login/", user);
+    console.log(response.status, "response");
+    if (response.status === 401) {
+      return { message: "Invalid email or password", status: "destructive" };
     }
     if (response) {
       const cookieStore = cookies();
@@ -28,16 +24,16 @@ export async function login(prevState, formData) {
         httpOnly: true,
         expires,
       });
-      return { message: "Login successful", status: "success" };  
+      return { message: "Login successful", status: "success" };
     }
   } catch (error) {
-    return { message: "Error logging in", status: "destructive" };
+    return { message: "An unexpected error occurred", status: "destructive" };
   }
 }
 
 export async function getSession() {
   const cookieStore = cookies();
-  const session = cookieStore.get("session")?.value;
+  const session = await cookieStore.get("session")?.value;
   if (!session) return null;
   return await decrypt(session);
 }
