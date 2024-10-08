@@ -19,16 +19,25 @@ import { useOrderContext } from "@/context/OrderContext";
 export function NewOrder() {
   const [drawerOpen, setDrawer] = useState(false);
   const [order, setLiveOrder] = useState(null);
+  const [isConnected, setIsConnected] = useState(false); // New state for connection status
   const { liveOrder, setOrder, subscriptionURL } = useOrderContext();
-  
+
   useEffect(() => {
-    if (subscriptionURL) {
-      const socket = new WebSocket(`${process.env.NEXT_PUBLIC_SOCKET}${subscriptionURL}/`);
-      
+    let socket;
+    let reconnectInterval;
+
+    const connectSocket = () => {
+      socket = new WebSocket(`${process.env.NEXT_PUBLIC_SOCKET}${subscriptionURL}/`);
       socket.onopen = () => {
         console.log("socket connected");
+        setIsConnected(true); // Update connection status
+        clearInterval(reconnectInterval); // Clear reconnection attempts
       };
-      
+      socket.onclose = () => {
+        console.log("socket disconnected");
+        setIsConnected(false); // Update connection status
+        reconnectInterval = setInterval(connectSocket, 3000); // Attempt reconnection every 3 seconds
+      };
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
@@ -39,11 +48,14 @@ export function NewOrder() {
           console.error(error);
         }
       };
-  
-      return () => {
-        socket.close();
-      };
+    };
+    if (subscriptionURL) {
+      connectSocket();
     }
+    return () => {
+      if (socket) socket.close();
+      clearInterval(reconnectInterval);
+    };
   }, [subscriptionURL, liveOrder, setOrder]);
 
   const printRef = useRef();

@@ -38,18 +38,18 @@ export const MenuProvider = ({ children }) => {
   };
 
   // Function to toggle item in stock status
-  const toggleItemStockStatus = (itemId) => {
+  const toggleItemStockStatus = (() => {
     let timer;
     return (item) => {
       clearTimeout(timer);
-      timer = setTimeout(() => {
-        updateItem({
+      timer = setTimeout(async () => {
+        await updateItem({
           slug: item.slug,
           in_stock: !item.in_stock,
         });
       }, 300); // 300ms debounce delay
     };
-  };
+  })();
 
   // Function to toggle item featured status
   const toggleItemFeaturedStatus = (() => {

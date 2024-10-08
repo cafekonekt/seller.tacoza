@@ -1,12 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
+import { LoginForm } from "./Form";
 
-import { getSession, login } from "@/lib/auth/session";
-import { redirect } from "next/navigation";
-import { Form } from "./Form";
-
-export const description =
-  "A login page with two columns. The first column has the login form with email and password. There's a Forgot your passwork link and a link to sign up if you do not have an account. The second column has a cover image.";
+export const description = "Tacoza Seller Dashboard. Login to your account to manage your products and orders.";
 
 export default async function Auth({ searchParams }) {
   return (
@@ -24,7 +20,7 @@ export default async function Auth({ searchParams }) {
 
             <h1 className="text-2xl font-bold">Seller Login</h1>
           </div>
-          <Form searchParams={searchParams} />
+          <LoginForm searchParams={searchParams} />
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?
             <Link href="https://tacoza.co/apply" className="underline">

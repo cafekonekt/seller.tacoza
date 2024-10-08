@@ -16,8 +16,6 @@ import { getArea } from "@/lib/table/getArea";
 import { AddTable } from "./AddTable";
 import { AddArea } from "./AddArea";
 import { DeleteTable } from "./DeleteTable";
-import { logout } from "@/lib/auth/session";
-import { revalidatePath } from "next/cache";
 
 export const metadata = {
   title: "Tables - tacoza Seller",
@@ -25,6 +23,7 @@ export const metadata = {
 };
 
 export function TableList({ tables }) {
+
   return (
     <Card className="py-8">
       <CardContent>
@@ -47,7 +46,7 @@ export function TableList({ tables }) {
                   <TableCell>{name.area}</TableCell>
                   <TableCell className="justify-end flex gap-2">
                     <QrDialog table={name} />
-                    <DeleteTable tableId={name.id} />
+                    <DeleteTable tableId={name.table_id} />
                   </TableCell>
                 </TableRow>
               ))}
@@ -62,6 +61,7 @@ export default async function TablePage() {
   const response_tables = getTables();
   const response_ares = getArea();
   const [tables, areas] = await Promise.all([response_tables, response_ares]);
+
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">

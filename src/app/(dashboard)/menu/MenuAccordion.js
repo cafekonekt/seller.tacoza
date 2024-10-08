@@ -61,6 +61,7 @@ function MenuItemComponent({ item }) {
     toggleItemFeaturedStatus(item);
   }
   const toggleStock = () => {
+    console.log('toggleStock');
     setInStock(!inStock);
     toggleItemStockStatus(item);
   }

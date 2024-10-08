@@ -3,14 +3,10 @@ import { getSession } from "@/lib/auth/session";
 import { apiPost } from "@/handlers/apiHandler";
 import { revalidatePath } from "next/cache";
 
-export async function createArea(prevState, formData) {
+export async function createArea(formData) {
   const user = await getSession();
 
-  const data = {
-    name: formData.get("name"),
-  };
-
-  const response = await apiPost("/api/shop/area/", data, {
+  const response = await apiPost("/api/shop/area/", formData, {
     headers: {
       Authorization: `Bearer ${user?.tokens?.access}`,
     },
