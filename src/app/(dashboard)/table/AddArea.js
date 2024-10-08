@@ -1,47 +1,49 @@
-'use client'
-import { useActionState, useEffect } from "react";
-import { useFormStatus } from "react-dom";
+'use client';
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
 
-import { createArea } from "@/lib/table/createArea";
 import { useToast } from "@/hooks/use-toast";
-
-const initialSate = {
-    message: null,
-};
-  
-function SubmitButton() {
-    const { pending } = useFormStatus();
-
-    return (
-        <Button type="submit" disabled={pending} className="mt-3">
-            Add
-        </Button>
-    );
-}
+import { createArea } from "@/lib/table/createArea";
+const formSchema = z.object({
+    name: z.string().min(2, { message: "Name must be at least 2 characters." }).max(20),
+});
 
 export function AddArea() {
     const { toast } = useToast();
-    const [state, formAction] = useActionState(createArea, initialSate);
 
-    useEffect(() => {
-        if (state.message) {
-            toast({
-                variant: state.status,
-                title: state.message,
-            });
-        }
-    }, [state, toast]);
+    const form = useForm({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            name: "",
+        },
+    });
 
+    async function onSubmit() {
+        const state = await createArea(form.getValues());
+        toast({
+            variant: state.status,
+            title: state.message,
+        });
+    }
 
     return (
         <Popover>
@@ -56,18 +58,26 @@ export function AddArea() {
                             Areas where tables are placed.
                         </p>
                     </div>
-
-                    <form action={formAction}>
-                        <Label htmlFor="width">Name</Label>
-                        <Input
-                            id="width"
-                            name="name"
-                            placeholder="Area name"
-                            className="col-span-2 h-8"
-                            required
-                        />
-                        <SubmitButton />
-                    </form>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Name</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Area name" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <Button type="submit" className="mt-3">
+                                Add
+                            </Button>
+                        </form>
+                    </Form>
                 </div>
             </PopoverContent>
         </Popover>

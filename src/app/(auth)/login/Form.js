@@ -1,30 +1,45 @@
-'use client'
+'use client';
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label"
-import { useActionState, useEffect } from "react";
-import { useFormStatus } from "react-dom";
-
+import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { login } from "@/lib/auth/session";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast";
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" disabled={pending} className="w-full">
-      Login
-    </Button>
-  );
-}
-export function Form({ searchParams }) {
-  const [state, formAction] = useActionState(login, { message: null });
-  const router = useRouter();
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
+const formSchema = z.object({
+  email: z.string().email({ message: "Invalid email address." }),
+  password: z.string()
+})
+
+export function LoginForm({ searchParams }) {
   const { toast } = useToast();
+  const router = useRouter();
 
-  useEffect(() => {
-    console.log(state)
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = async () => {
+    const state = await login(form.getValues());
     if (state.message) {
       toast({
         title: state.message,
@@ -34,36 +49,59 @@ export function Form({ searchParams }) {
     if (state.status === "success") {
       searchParams.next ? router.push(searchParams.next) : router.push("/");
     }
-  }, [state, router, searchParams, toast]);
+  };
 
   return (
-    <form className="grid gap-4" action={formAction}>
-      <div className="grid gap-2">
-        <Label htmlFor="email">Email</Label>
-        <Input
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+        <FormField
+          control={form.control}
           name="email"
-          type="email"
-          placeholder="m@example.com"
-          required
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input
+                  type="email"
+                  placeholder="m@example.com"
+                  {...field}
+                  required
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      <div className="grid gap-2">
-        <div className="flex items-center">
-          <Label htmlFor="password">Password</Label>
-          <Link
-            href="/forgot-password"
-            className="ml-auto inline-block text-sm underline"
-          >
-            Forgot your password?
-          </Link>
-        </div>
-        <Input
+        <FormField
+          control={form.control}
           name="password"
-          type="password"
-          placeholder="Password"
-          required />
-      </div>
-      <SubmitButton />
-    </form>
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex items-center">
+                <FormLabel>Password</FormLabel>
+                <Link
+                  href="/forgot-password"
+                  className="ml-auto inline-block text-sm underline"
+                >
+                  Forgot your password?
+                </Link>
+              </div>
+              <FormControl>
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  {...field}
+                  required
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit" className="w-full">
+          Login
+        </Button>
+      </form>
+    </Form>
   );
 }

@@ -3,12 +3,11 @@ import { encrypt, decrypt } from "@/lib/auth/util/lib";
 import { cookies } from "next/headers";
 import { apiPost } from "@/handlers/apiHandler";
 
-export async function login(prevState, formData) {
+export async function login(formData) {
   const user = {
-    email: formData.get("email"),
-    password: formData.get("password"),
+    email: formData.email,
+    password: formData.password,
   };
-
   try {
     const response = await apiPost("/api/auth/login/", user);
     console.log(response.status, "response");
@@ -34,7 +33,7 @@ export async function login(prevState, formData) {
 
 export async function getSession() {
   const cookieStore = cookies();
-  const session = cookieStore.get("session")?.value;
+  const session = await cookieStore.get("session")?.value;
   if (!session) return null;
   return await decrypt(session);
 }

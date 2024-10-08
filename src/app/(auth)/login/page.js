@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Form } from "./Form";
+import { LoginForm } from "./Form";
 
 export const description = "Tacoza Seller Dashboard. Login to your account to manage your products and orders.";
 
@@ -20,7 +20,7 @@ export default async function Auth({ searchParams }) {
 
             <h1 className="text-2xl font-bold">Seller Login</h1>
           </div>
-          <Form searchParams={searchParams} />
+          <LoginForm searchParams={searchParams} />
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?
             <Link href="https://tacoza.co/apply" className="underline">
