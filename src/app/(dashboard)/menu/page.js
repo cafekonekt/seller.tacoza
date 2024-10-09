@@ -32,7 +32,7 @@ export default async function Menu() {
                     <Badge className="ml-1 flex bg-muted-foreground shrink-0 items-center justify-center rounded-full">
                       {items?.map(item =>
                         item.sub_categories && item.sub_categories.length > 0
-                          ? item.sub_categories.reduce((total, subCategory) => total + (subCategory.food_items?.length || 0), 0)
+                          ? item.sub_categories.reduce((total, subCategory) => total + (subCategory.food_items?.length), 0)
                           : (item.food_items?.length || 0))}
                     </Badge>
                   </TabsTrigger>
