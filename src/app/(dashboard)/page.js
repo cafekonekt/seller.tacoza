@@ -1,14 +1,23 @@
 export const metadata = {
-  title: "Dashboard - tacoza Seller",
-  description: "tacoza Seller Dashboard",
+  title: "Dashboard - Tacoza Seller",
+  description: "Tacoza Seller Dashboard",
 };
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { Activity, CreditCard, DollarSign, Users } from "lucide-react";
 import { BarChartOrders, LineChartRevenue } from "./charts";
+import { apiGet } from "@/handlers/apiHandler";
+import { getSession } from "@/lib/auth/session";
 
-export default function Dashboard() {
+export default async function Dashboard() {
+  const session = await getSession()
+  const dashboardData = await apiGet("/api/shop/dashboard", {
+    headers: {
+      Authorization: `Bearer ${session?.tokens?.access}`,
+    },
+  });
+
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 overflow-y-scroll">
       <div className="flex items-center">
@@ -66,8 +75,8 @@ export default function Dashboard() {
       </div>
 
       <div className="grid w-full gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2">
-        <BarChartOrders />
-        <LineChartRevenue />
+        <BarChartOrders dashboardData={dashboardData}/>
+        <LineChartRevenue dashboardData={dashboardData}/>
       </div>
     </main>
   );
