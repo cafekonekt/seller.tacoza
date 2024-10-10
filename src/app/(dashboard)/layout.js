@@ -5,6 +5,7 @@ import { Sidebar } from "@/components/ui/dashboard/sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import { OrderProvider } from "@/context/OrderContext";
 import { NewOrder } from "./newOrder";
+import { getOutlet } from "@/lib/outlet/getOutlet";
 
 const inter = Inter({ subsets: ["latin"] });
 export const metadata = {
@@ -13,21 +14,18 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
+  const outlet = await getOutlet();
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <OrderProvider>
-          <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-            <Sidebar />
-            <div className="flex flex-col max-h-screen overflow-hidden">
-              <Header />
-              {children}
-              <Toaster />
-            </div>
-          </div>
-          <NewOrder />
-        </OrderProvider>
-      </body>
-    </html>
+    <OrderProvider>
+      <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+        <Sidebar />
+        <div className="flex flex-col max-h-screen overflow-hidden">
+          <Header outlet={outlet}/>
+          {children}
+          <Toaster />
+        </div>
+      </div>
+      <NewOrder />
+    </OrderProvider>
   );
 }

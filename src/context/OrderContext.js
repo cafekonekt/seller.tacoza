@@ -17,7 +17,8 @@ export const OrderProvider = ({ children }) => {
     completed: [],
   });
   const [subscriptionURL, setUrl] = useState('');
-  
+  const [isConnected, setIsConnected] = useState(false); // Connection status
+
   const fetchSubscriptionURL = async () => {
     const subscriptionURL = await getSubscriptionURL();
     setUrl(subscriptionURL?.url || '');
@@ -35,13 +36,11 @@ export const OrderProvider = ({ children }) => {
   };
   
   useEffect(() => {
-    fetchOrders();
-    fetchSubscriptionURL();
-    console.log("fetching orders");
+    Promise.all([fetchOrders(), fetchSubscriptionURL()]);
   }, []);
   
   return (
-    <OrderContext.Provider value={{ liveOrder, subscriptionURL, fetchOrders, setOrder }}>
+    <OrderContext.Provider value={{ liveOrder, subscriptionURL, fetchOrders, setOrder, isConnected, setIsConnected }}>
       {children}
     </OrderContext.Provider>
   );

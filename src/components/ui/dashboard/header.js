@@ -2,15 +2,11 @@
 import Link from "next/link";
 import {
   BadgePercent,
-  Bell,
   Briefcase,
-  ChefHat,
   CircleUser,
-  Grid2X2,
   Home,
   LineChart,
   Menu,
-  QrCode,
   Ratio,
   Salad,
   Search,
@@ -43,7 +39,7 @@ import LogoutButton from "./LogoutButton";
 import { usePathname } from "next/navigation";
 import { useOrderContext } from "@/context/OrderContext";
 
-export function Header() {
+export function Header({ outlet }) {
   const pathname = usePathname();
   const { liveOrder } = useOrderContext();
 
@@ -73,6 +69,8 @@ export function Header() {
     { href: "#", label: "Finance", icon: LineChart, badge: "Coming Soon" },
   ];
 
+  const { isConnected } = useOrderContext();
+  
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <Sheet>
@@ -93,9 +91,8 @@ export function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${
-                    isActive ? "bg-muted text-primary" : ""
-                  }`}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${isActive ? "bg-muted text-primary" : ""
+                    }`}
                 >
                   <item.icon className="h-4 w-4" />
                   {item.label}
@@ -166,8 +163,8 @@ export function Header() {
 
       <div className="flex items-center gap-4 rounded-lg p-1 bg-accent">
         <div className="w-10 h-10 aspect-square">
-          <img
-            src="https://content.jdmagicbox.com/comp/indore/d3/0731px731.x731.150724143308.n7d3/catalogue/mahal-restaurant-indore-city-indore-north-indian-restaurants-0rocnxqfcp.jpg"
+          <Image
+            src={outlet?.logo || "/image.png"}
             alt="Restaurant"
             height="100"
             width="100"
@@ -176,8 +173,12 @@ export function Header() {
         </div>
 
         <div className="text-muted-foreground text-xs">
-          <div className="text-sm text-primary font-semibold">Sagar Gaire</div>
-          Chhindwara
+          <div className="text-sm text-primary font-semibold">
+            {outlet?.name?.split(' ')
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+              .join(' ')}
+          </div>
+          {isConnected ? "Online" : "Offline"}
         </div>
 
         <DropdownMenu>

@@ -9,7 +9,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Link, Printer, UtensilsCrossed, VolumeX } from "lucide-react";
@@ -19,8 +18,7 @@ import { useOrderContext } from "@/context/OrderContext";
 export function NewOrder() {
   const [drawerOpen, setDrawer] = useState(false);
   const [order, setLiveOrder] = useState(null);
-  const [isConnected, setIsConnected] = useState(false); // New state for connection status
-  const { liveOrder, setOrder, subscriptionURL } = useOrderContext();
+  const { liveOrder, setOrder, subscriptionURL, setIsConnected } = useOrderContext();
 
   useEffect(() => {
     let socket;
@@ -56,7 +54,7 @@ export function NewOrder() {
       if (socket) socket.close();
       clearInterval(reconnectInterval);
     };
-  }, [subscriptionURL, liveOrder, setOrder]);
+  }, [subscriptionURL, liveOrder, setOrder, setIsConnected]);
 
   const printRef = useRef();
 

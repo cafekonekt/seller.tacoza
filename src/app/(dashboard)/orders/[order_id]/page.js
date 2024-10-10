@@ -72,7 +72,7 @@ export default async function Dashboard({ params }) {
               <Button size="sm" variant="outline" className="h-8 gap-1">
                 <Clock className="h-3.5 w-3.5" />
                 <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                  {Math.floor((new Date(order.updated_at).getTime() - new Date(order.created_at).getTime())/(1000 * 60))} Minutes
+                  {Math.floor((new Date(order.updated_at).getTime() - new Date(order.created_at).getTime()) / (1000 * 60))} Minutes
                 </span>
               </Button>
               <DropdownMenu>
@@ -118,7 +118,7 @@ export default async function Dashboard({ params }) {
                 </li> */}
                 <li className="flex items-center justify-between">
                   <span className="text-muted-foreground">Tax</span>
-                  <span>INR {order.total*0.05}</span>
+                  <span>INR {order.total * 0.05}</span>
                 </li>
                 <li className="flex items-center justify-between font-semibold">
                   <span className="text-muted-foreground">Total</span>
@@ -126,7 +126,7 @@ export default async function Dashboard({ params }) {
                 </li>
               </ul>
             </div>
-            <Separator className="my-4" />
+            {/* <Separator className="my-4" />
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-3">
                 <div className="font-semibold">Shipping Information</div>
@@ -142,7 +142,7 @@ export default async function Dashboard({ params }) {
                   Same as shipping address
                 </div>
               </div>
-            </div>
+            </div> */}
             <Separator className="my-4" />
             <div className="grid gap-3">
               <div className="font-semibold">Customer Information</div>
@@ -172,7 +172,7 @@ export default async function Dashboard({ params }) {
                 <div className="flex items-center justify-between">
                   <dt className="flex items-center gap-1 text-muted-foreground">
                     <CreditCard className="h-4 w-4" />
-                    Visa
+                    {order.payment_method}
                   </dt>
                   <dd>**** **** **** 4532</dd>
                 </div>
@@ -205,10 +205,10 @@ export default async function Dashboard({ params }) {
           <Card className="flex gap-2 p-4">
             <Avatar>
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>{ order.user.name }</AvatarFallback>
+              <AvatarFallback>{order.user.name}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col gap-1">
-              <div className="font-semibold">{ order.user.name }</div>
+              <div className="font-semibold">{order.user.name}</div>
               <p className="text-muted-foreground">Customer</p>
               <Button size="sm" variant="outline">
                 <Mail className="h-4 w-4 mr-2" /> Email
@@ -221,22 +221,16 @@ export default async function Dashboard({ params }) {
             </CardHeader>
             <CardContent className="">
               <Timeline>
-                <TimelineItem status="done">
-                  <TimelineHeading side="right">Ordered</TimelineHeading>
-                  <TimelineDot status="done" />
-                  <TimelineLine done />
-                  <TimelineContent>
-                    {new Date(order.created_at).toDateString()}
-                  </TimelineContent>
-                </TimelineItem>
-                <TimelineItem>
-                  <TimelineHeading>Served</TimelineHeading> 
-                  <TimelineDot />
-                  <TimelineLine />
-                  <TimelineContent>
-                    {new Date(order.updated_at).toDateString()}
-                  </TimelineContent>
-                </TimelineItem>
+                {order.order_timeline.map((item, key) => (
+                  <TimelineItem key={key}>
+                    <TimelineHeading side="right">{item.stage}</TimelineHeading>
+                    <TimelineDot status={item.status} />
+                    <TimelineLine status={item.status} />
+                    <TimelineContent>
+                      {item.content}
+                    </TimelineContent>
+                  </TimelineItem>
+                ))}
               </Timeline>
             </CardContent>
           </Card>

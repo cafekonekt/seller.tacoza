@@ -24,35 +24,14 @@ import {
   ChartTooltipContent,
 } from "@/components//ui/chart";
 
-// Dummy data for the dashboard (Online Food Ordering Data)
-const demoData = {
-  orders: [
-    { date: "2024-01-01", orderCount: 450 },
-    { date: "2024-01-02", orderCount: 520 },
-    { date: "2024-01-03", orderCount: 480 },
-    { date: "2024-01-04", orderCount: 350 },
-    { date: "2024-01-05", orderCount: 410 },
-    { date: "2024-01-06", orderCount: 620 },
-    { date: "2024-01-07", orderCount: 390 },
-  ],
-  revenue: [
-    { date: "2024-01-01", dailyRevenue: 12300 },
-    { date: "2024-01-02", dailyRevenue: 15800 },
-    { date: "2024-01-03", dailyRevenue: 13800 },
-    { date: "2024-01-04", dailyRevenue: 9500 },
-    { date: "2024-01-05", dailyRevenue: 10500 },
-    { date: "2024-01-06", dailyRevenue: 17500 },
-    { date: "2024-01-07", dailyRevenue: 8900 },
-  ],
-};
 
-export function BarChartOrders() {
+export function BarChartOrders({ dashboardData }) {
   return (
     <Card className="flex flex-col">
       <CardHeader className="space-y-0 pb-2">
         <CardDescription>Orders Today</CardDescription>
         <CardTitle className="text-4xl tabular-nums">
-          12,584{" "}
+          {dashboardData.todaysOrders}{" "}
           <span className="font-sans text-sm font-normal tracking-normal text-muted-foreground">
             orders
           </span>
@@ -73,7 +52,7 @@ export function BarChartOrders() {
               left: -4,
               right: -4,
             }}
-            data={demoData.orders}
+            data={dashboardData.orders}
           >
             <Bar
               dataKey="orderCount"
@@ -136,25 +115,27 @@ export function BarChartOrders() {
       <CardFooter className="flex-col items-start gap-1">
         <CardDescription>
           Over the past 7 days, you have{" "}
-          <span className="font-medium text-foreground">3,000</span> orders.
+          <span className="font-medium text-foreground">
+            {dashboardData.orders.reduce((total, day) => total + day.orderCount, 0)}
+          </span> orders.
         </CardDescription>
         <CardDescription>
-          You need <span className="font-medium text-foreground">2,500</span>{" "}
-          more orders to reach your goal.
+          You had <span className="font-medium text-foreground">{dashboardData.totalOrdersLastWeek}</span>{" "}
+          orders last week.
         </CardDescription>
       </CardFooter>
     </Card>
   );
 }
 
-export function LineChartRevenue() {
+export function LineChartRevenue({ dashboardData }) {
   return (
     <Card className="flex flex-col">
       <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2 [&>div]:flex-1">
         <div>
           <CardDescription>Avg. Revenue</CardDescription>
           <CardTitle className="flex items-baseline gap-1 text-4xl tabular-nums">
-            12,345
+            {dashboardData.averageRevenue}
             <span className="text-sm font-normal tracking-normal text-muted-foreground">
               INR
             </span>
@@ -163,7 +144,7 @@ export function LineChartRevenue() {
         <div>
           <CardDescription>Daily Revenue</CardDescription>
           <CardTitle className="flex items-baseline gap-1 text-4xl tabular-nums">
-            15,800
+            {dashboardData.todaysRevenue}
             <span className="text-sm font-normal tracking-normal text-muted-foreground">
               INR
             </span>
@@ -187,7 +168,7 @@ export function LineChartRevenue() {
               right: 14,
               top: 10,
             }}
-            data={demoData.revenue}
+            data={dashboardData.revenue}
           >
             <CartesianGrid
               strokeDasharray="4 4"
