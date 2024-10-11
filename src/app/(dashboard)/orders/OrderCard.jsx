@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { updateOrder } from "@/lib/orders/updateOrder";
 
 export const OrderCard = ({
   order,
@@ -18,11 +19,19 @@ export const OrderCard = ({
   changeOrderStatus,
   onDragStart,
 }) => {
-  console.log(order.items);
   const orderTime = new Date(order.created_at)
     .toLocaleTimeString()
     .replace(/\s*(\d{2}:\d{2}:\d{2})\s*/, "$1")
     .replace(/:\d{2}\s*/, " ");
+
+  const updatePaymentStatus = (value) => {
+    const orderStatusMap = {
+      paid: "success",
+      unpaid: "pending",
+      cancle: "cancelled",
+    };
+    updateOrder(order.order_id, orderStatusMap[value]);
+  };
 
   return (
     <div
@@ -55,49 +64,62 @@ export const OrderCard = ({
         </div>
         <Separator className="my-2" />
         {order.items.map((item, key) => (
-          <>
-            <div className="flex items-center justify-between" key={key}>
-              <p className="font-medium flex items-center">
-                <Image src="/veg.svg" alt="Dash" height="16" width="16" />
-                <span className="text-muted-foreground ml-2 mr-1">
-                  {item.quantity} x
-                </span>
-                {item.food_item.name} {item.variant ? `- ${item.variant}` : ""}
-              </p>
-              <br />
-
-              <span className="flex items-center text-base font-medium">
-                ₹{item.totalPrice}
+          <div className="flex items-center justify-between" key={key}>
+            <p className="font-medium flex items-center">
+              <Image src="/veg.svg" alt="Dash" height="16" width="16" />
+              <span className="text-muted-foreground ml-2 mr-1">
+                {item.quantity} x
               </span>
-            </div>
+              {item.food_item.name} {item.variant ? `- ${item.variant}` : ""}
+            </p>
             {item.addons && (
               <span className="text-sm text-muted-foreground">
                 {item.addons.map((addon) => addon.name).join(", ")}
               </span>
             )}
-          </>
+            <span className="flex items-center text-base font-medium">
+              ₹{item.totalPrice}
+            </span>
+          </div>
         ))}
         <div className="flex items-center justify-between mt-2 pt-2 border-t border-dashed">
           <div className="flex items-center text-base">
             <ReceiptText size={16} />
             Bill
-            <span className="ml-2 px-2 text-sm font-semibold border border-blue-500 text-blue-500 bg-blue-100 rounded-lg">
-              PAID
-            </span>
+            {order.payment_status === "success" ? (
+              <span className="ml-2 px-2 text-sm font-semibold border border-blue-500 text-blue-500 bg-blue-100 rounded-lg">
+                PAID
+              </span>
+            ) : (
+              <Select
+                defaultValue="unpaid"
+                onValueChange={(value) => updatePaymentStatus(value)}
+              >
+                <SelectTrigger className="w-fit h-6 ml-2">
+                  <SelectValue placeholder="Select Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="paid">
+                    <span className="ml-2 px-2 text-sm font-semibold border border-blue-500 text-blue-500 bg-blue-100 rounded-lg">
+                      PAID
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="unpaid">
+                    <span className="ml-2 px-2 text-sm font-semibold border border-blue-500 text-blue-500 bg-blue-100 rounded-lg">
+                      UNPAID
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="cancle">
+                    <span className="ml-2 px-2 text-sm font-semibold border border-blue-500 text-blue-500 bg-blue-100 rounded-lg">
+                      CANCLE
+                    </span>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            )}
             <span className="ml-2 px-2 text-sm font-semibold border border-yellow-600 text-yellow-600 bg-yellow-100 rounded-lg">
-              CASH
+              {order.payment_method.toUpperCase()}
             </span>
-            {/* Show select only on cash payment */}
-            <Select>
-              <SelectTrigger className="w-fit h-6 ml-2">
-                <SelectValue placeholder="Update" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="light">Pending</SelectItem>
-                <SelectItem value="dark">Cancel</SelectItem>
-                <SelectItem value="system">Paid</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
           <span className="flex items-center text-base font-medium">
             ₹{order.total}
@@ -111,7 +133,7 @@ export const OrderCard = ({
               changeOrderStatus(
                 order.order_id,
                 status,
-                status === "new" ? "preparing" : "completed",
+                status === "new" ? "preparing" : "completed"
               );
             }}
           >
@@ -128,6 +150,13 @@ function OrderTimer({ order }) {
   const [elapsedTime, setElapsedTime] = useState(0);
 
   useEffect(() => {
+    if (order.status === "completed") {
+      const completedTime =
+        new Date(order.updated_at).getTime() - new Date(order.created_at).getTime();
+      setElapsedTime(Math.floor(completedTime / 1000));
+      return;
+    }
+
     const intervalId = setInterval(() => {
       const currentTime = new Date().getTime();
       const orderTime = new Date(order.created_at).getTime();
@@ -136,19 +165,19 @@ function OrderTimer({ order }) {
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [order.created_at]);
+  }, [order.created_at, order.updated_at, order.status]);
 
   const minutesElapsed = Math.floor(elapsedTime / 60);
   const secondsElapsed = elapsedTime % 60;
 
-  // Assign specific class names based on the time elapsed
+  // Assign specific class names based on the time elapsed and avg_preparation_time
   let bgColorClass = "bg-green-200";
   let textColorClass = "text-green-600";
 
-  if (minutesElapsed >= 5 && minutesElapsed < 10) {
+  if (minutesElapsed >= 10 && minutesElapsed < order.avg_preparation_time) {
     bgColorClass = "bg-yellow-200";
     textColorClass = "text-yellow-600";
-  } else if (minutesElapsed >= 10) {
+  } else if (minutesElapsed >= order.avg_preparation_time) {
     bgColorClass = "bg-red-200";
     textColorClass = "text-red-600";
   }
