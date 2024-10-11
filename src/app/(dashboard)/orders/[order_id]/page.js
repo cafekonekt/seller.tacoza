@@ -43,6 +43,7 @@ import Link from "next/link";
 
 export default async function Dashboard({ params }) {
   const order = await getOrder(params.order_id);
+  console.log(order, "order");
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -224,9 +225,10 @@ export default async function Dashboard({ params }) {
                 {order.order_timeline.map((item, key) => (
                   <TimelineItem key={key}>
                     <TimelineHeading side="right">{item.stage}</TimelineHeading>
-                    <TimelineDot status={item.status} />
-                    <TimelineLine status={item.status} />
+                    <TimelineDot status={item.done ? "done" : ""} />
+                    <TimelineLine status={item.done ? "done" : ""} />
                     <TimelineContent>
+                      <p>{new Date(item.created_at).toLocaleString()}</p>
                       {item.content}
                     </TimelineContent>
                   </TimelineItem>
