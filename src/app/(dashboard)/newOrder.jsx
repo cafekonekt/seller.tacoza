@@ -23,38 +23,55 @@ export function NewOrder() {
   useEffect(() => {
     let socket;
     let reconnectInterval;
+    let attempt = 0; // Track the number of reconnect attempts
 
     const connectSocket = () => {
       socket = new WebSocket(`${process.env.NEXT_PUBLIC_SOCKET}${subscriptionURL}/`);
+
       socket.onopen = () => {
-        console.log("socket connected");
+        console.log("Socket connected");
         setIsConnected(true); // Update connection status
         clearInterval(reconnectInterval); // Clear reconnection attempts
+        attempt = 0; // Reset the attempt counter after a successful connection
       };
+
       socket.onclose = () => {
-        console.log("socket disconnected");
+        console.log("Socket disconnected");
         setIsConnected(false); // Update connection status
-        reconnectInterval = setInterval(connectSocket, 3000); // Attempt reconnection every 3 seconds
+
+        // Implement exponential backoff
+        const reconnectDelay = Math.min(2000 * Math.pow(2, attempt), 60000); // Limit max delay to 60 seconds
+        console.log(`Attempting reconnect in ${reconnectDelay / 1000} seconds...`);
+
+        reconnectInterval = setTimeout(() => {
+          attempt++;
+          connectSocket();
+        }, reconnectDelay);
       };
+
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
+          console.log(data, "response data")
           setLiveOrder(data.message);
-          setOrder({ ...liveOrder, newOrders: [...liveOrder.newOrders, data.message] });
+          setOrder({ ...liveOrder, new: [...liveOrder.new, data.message] });
           setDrawer(true);
         } catch (error) {
-          console.error(error);
+          console.error("Failed to parse WebSocket message:", error);
         }
       };
     };
+
     if (subscriptionURL) {
       connectSocket();
     }
+
     return () => {
       if (socket) socket.close();
-      clearInterval(reconnectInterval);
+      clearTimeout(reconnectInterval);
     };
   }, [subscriptionURL, liveOrder, setOrder, setIsConnected]);
+
 
   const printRef = useRef();
 
@@ -85,7 +102,7 @@ export function NewOrder() {
               <span className="text-sm font-medium text-muted-foreground">
                 Order placed on {new Date(order.created_at).toLocaleString()}
                 <span className="flex item gap-2 text-lg mt-1">
-                  ID: {order.order_id}
+                  ID: {order.order_id?.split("-")?.[0]}
                   <Badge className="bg-blue-500 text-white">
                     {order.table}
                   </Badge>

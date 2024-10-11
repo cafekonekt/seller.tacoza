@@ -43,6 +43,7 @@ import Link from "next/link";
 
 export default async function Dashboard({ params }) {
   const order = await getOrder(params.order_id);
+  console.log(order, "order");
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -222,11 +223,12 @@ export default async function Dashboard({ params }) {
             <CardContent className="">
               <Timeline>
                 {order.order_timeline.map((item, key) => (
-                  <TimelineItem key={key}>
+                  <TimelineItem key={key} status={item.done ? "done" : ""}>
                     <TimelineHeading side="right">{item.stage}</TimelineHeading>
-                    <TimelineDot status={item.status} />
-                    <TimelineLine status={item.status} />
+                    <TimelineDot status={item.done ? "done" : ""} />
+                    {item.done && (order.order_timeline?.length-1 !== key) && <TimelineLine done />}
                     <TimelineContent>
+                      <p>{new Date(item.created_at).toLocaleString()}</p>
                       {item.content}
                     </TimelineContent>
                   </TimelineItem>
