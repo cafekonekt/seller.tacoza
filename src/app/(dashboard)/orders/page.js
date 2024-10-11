@@ -17,32 +17,34 @@ const STATUS = {
 export default function LiveOrder() {
   const { liveOrder, setOrder } = useOrderContext();
 
-  const changeOrderStatus = useCallback(async (orderId, fromStatus, toStatus) => {
-    try {
-      setOrder((prev) => {
-        const fromItems = prev[fromStatus].filter(
-          (existingItem) => existingItem.order_id !== orderId,
-        );
-        const toItems = [
-          ...prev[toStatus],
-          prev[fromStatus].find(
-            (existingItem) => existingItem.order_id === orderId,
-          ),
-        ];
-        return {
-          ...prev,
-          [toStatus]: toItems,
-          [fromStatus]: fromItems,
-        };
-      });
-      
-      
-      // Update the order status on the server
-      await updateOrderStatus(orderId, STATUS[toStatus]);
-    } catch (error) {
-      console.error("Error updating order status:", error);
-    }
-  }, [setOrder]);
+  const changeOrderStatus = useCallback(
+    async (orderId, fromStatus, toStatus) => {
+      try {
+        setOrder((prev) => {
+          const fromItems = prev[fromStatus].filter(
+            (existingItem) => existingItem.order_id !== orderId,
+          );
+          const toItems = [
+            ...prev[toStatus],
+            prev[fromStatus].find(
+              (existingItem) => existingItem.order_id === orderId,
+            ),
+          ];
+          return {
+            ...prev,
+            [toStatus]: toItems,
+            [fromStatus]: fromItems,
+          };
+        });
+
+        // Update the order status on the server
+        await updateOrderStatus(orderId, STATUS[toStatus]);
+      } catch (error) {
+        console.error("Error updating order status:", error);
+      }
+    },
+    [setOrder],
+  );
 
   const onDrop = async (event, toStatus) => {
     const orderId = event.dataTransfer.getData("order_id");
@@ -60,11 +62,14 @@ export default function LiveOrder() {
     event.dataTransfer.setData("fromStatus", fromStatus);
   };
 
-  const isDesktop = useMediaQuery('(min-width: 768px)', { noSsr: true });
+  const isDesktop = useMediaQuery("(min-width: 768px)", { noSsr: true });
 
   if (isDesktop) {
     return (
-      <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 overflow-auto" suppressHydrationWarning>
+      <main
+        className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 overflow-auto"
+        suppressHydrationWarning
+      >
         <div className="grid grid-cols-3 gap-4">
           {Object.keys(liveOrder).map((status, key) => (
             <div
@@ -83,7 +88,13 @@ export default function LiveOrder() {
                 <CardContent className="p-2">
                   {/* Order Card start */}
                   {liveOrder[status].map((order) => (
-                    <OrderCard key={order.order_id} order={order} status={status} changeOrderStatus={changeOrderStatus} onDragStart={onDragStart} />
+                    <OrderCard
+                      key={order.order_id}
+                      order={order}
+                      status={status}
+                      changeOrderStatus={changeOrderStatus}
+                      onDragStart={onDragStart}
+                    />
                   ))}
                 </CardContent>
               </Card>
@@ -96,12 +107,12 @@ export default function LiveOrder() {
   return (
     <main className="w-screen p-4 overflow-auto" suppressHydrationWarning>
       <Tabs defaultValue="new">
-        <TabsList>
+        <TabsList className="w-full">
           {Object.keys(liveOrder).map((status, key) => (
             <TabsTrigger value={status} asChild key={key}>
               <div className="flex">
                 <span>{status.toUpperCase()}</span>
-                <Badge className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+                <Badge className="flex ml-1 h-5 w-2 shrink-0 items-center justify-center text-sm">
                   {liveOrder[status].length}
                 </Badge>
               </div>
@@ -114,7 +125,13 @@ export default function LiveOrder() {
               <CardContent className="p-2">
                 {/* Order Card start */}
                 {liveOrder[status].map((order) => (
-                  <OrderCard key={order.order_id} order={order} status={status} changeOrderStatus={changeOrderStatus} onDragStart={onDragStart} />
+                  <OrderCard
+                    key={order.order_id}
+                    order={order}
+                    status={status}
+                    changeOrderStatus={changeOrderStatus}
+                    onDragStart={onDragStart}
+                  />
                 ))}
               </CardContent>
             </Card>

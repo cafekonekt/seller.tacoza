@@ -11,7 +11,7 @@ import { apiGet } from "@/handlers/apiHandler";
 import { getSession } from "@/lib/auth/session";
 
 export default async function Dashboard() {
-  const session = await getSession()
+  const session = await getSession();
   const dashboardData = await apiGet("/api/shop/dashboard", {
     headers: {
       Authorization: `Bearer ${session?.tokens?.access}`,
@@ -23,7 +23,7 @@ export default async function Dashboard() {
       <div className="flex items-center">
         <h1 className="text-lg font-semibold md:text-2xl">Dashboard</h1>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 md:gap-8 lg:grid-cols-4">
         <Card x-chunk="dashboard-01-chunk-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
@@ -75,8 +75,8 @@ export default async function Dashboard() {
       </div>
 
       <div className="grid w-full gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2">
-        <BarChartOrders dashboardData={dashboardData}/>
-        <LineChartRevenue dashboardData={dashboardData}/>
+        <BarChartOrders dashboardData={dashboardData} />
+        <LineChartRevenue dashboardData={dashboardData} />
       </div>
     </main>
   );
