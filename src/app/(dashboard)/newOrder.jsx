@@ -52,8 +52,9 @@ export function NewOrder() {
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
+          console.log(data, "response data")
           setLiveOrder(data.message);
-          setOrder({ ...liveOrder, newOrders: [...liveOrder.newOrders, data.message] });
+          setOrder({ ...liveOrder, new: [...liveOrder.new, data.message] });
           setDrawer(true);
         } catch (error) {
           console.error("Failed to parse WebSocket message:", error);
@@ -101,7 +102,7 @@ export function NewOrder() {
               <span className="text-sm font-medium text-muted-foreground">
                 Order placed on {new Date(order.created_at).toLocaleString()}
                 <span className="flex item gap-2 text-lg mt-1">
-                  ID: {order.order_id}
+                  ID: {order.order_id?.split("-")?.[0]}
                   <Badge className="bg-blue-500 text-white">
                     {order.table}
                   </Badge>

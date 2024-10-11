@@ -223,10 +223,10 @@ export default async function Dashboard({ params }) {
             <CardContent className="">
               <Timeline>
                 {order.order_timeline.map((item, key) => (
-                  <TimelineItem key={key}>
+                  <TimelineItem key={key} status={item.done ? "done" : ""}>
                     <TimelineHeading side="right">{item.stage}</TimelineHeading>
                     <TimelineDot status={item.done ? "done" : ""} />
-                    <TimelineLine status={item.done ? "done" : ""} />
+                    {item.done && (order.order_timeline?.length-1 !== key) && <TimelineLine done />}
                     <TimelineContent>
                       <p>{new Date(item.created_at).toLocaleString()}</p>
                       {item.content}
