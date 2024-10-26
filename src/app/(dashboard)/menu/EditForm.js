@@ -45,6 +45,8 @@ export function EditForm({ foodCategory, addonCategory, type }) {
 
   const [formData, setFormData] = useState(selectedItem);
 
+  console.log("selectedItem", selectedItem);
+
   useEffect(() => {
     setFormData(selectedItem);
   }, [selectedItem]);
@@ -98,7 +100,7 @@ export function EditForm({ foodCategory, addonCategory, type }) {
             type="single"
             variant="outline"
             className="flex gap-4 p-4"
-            value={formData.type==="menu" ? formData.food_type : formData.addon_type}
+            value={formData.type === "menu" ? formData.food_type : formData.addon_type}
           // onValueChange={(value) => setFoodTypeFilter(value)} // Set filter state
           >
             {Object.keys(iconMap).map((type, key) => (
@@ -204,8 +206,8 @@ export function EditForm({ foodCategory, addonCategory, type }) {
           <Card className="flex gap-4 p-4">
             <div className="flex items-center justify-center w-24 h-20 border rounded-lg">
               <Image
-                src={"/pizza.jpg"}
-                alt="Restaurant"
+                src={formData.image_url || "/pizza.jpg"}
+                alt={formData.name}
                 width={300}
                 height={300}
                 className="w-full h-full object-cover rounded-lg"
@@ -215,6 +217,21 @@ export function EditForm({ foodCategory, addonCategory, type }) {
               type="file"
               id="photo"
               className="opacity-0 z-[-1] absolute"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      image: file,
+                      image_url: reader.result,
+                    }));
+                  };
+                  reader.readAsDataURL(file);
+                }
+              }}
             />
             <label
               htmlFor="photo"
@@ -256,9 +273,8 @@ export function EditForm({ foodCategory, addonCategory, type }) {
             <Card className="col-span-1">
               <CardHeader>Variants</CardHeader>
               <CardContent>
-                {formData.variants &&
-                  formData.variants.type?.length > 0 &&
-                  formData.variants.type.map((variant, key) => (
+                {formData.item_variants &&
+                  formData.item_variants.map((variant, key) => (
                     <Badge
                       key={key}
                       className="m-1"
