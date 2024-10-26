@@ -37,6 +37,7 @@ const initialFormState = {
   max_order_value: "",
   use_limit_per_user: "",
   use_limit: "",
+  apllicable_for: "alluser",
 };
 
 function SubmitButton() {
@@ -92,7 +93,7 @@ export function AddOffer() {
         return;
       }
     }
-
+    console.log(formData, "Form is valid");
     const response = await createOffer(formData);
     toast({
       variant: response.status,
@@ -102,7 +103,9 @@ export function AddOffer() {
 
   return (
     <Dialog>
-      <DialogTrigger>Create Offer</DialogTrigger>
+      <DialogTrigger asChild>
+        <Button>+ Create</Button>
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add Offer</DialogTitle>
@@ -214,6 +217,12 @@ export function AddOffer() {
                 defaultValue="alluser"
                 id="usertype"
                 className="flex my-2"
+                onValueChange={(e) => {
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    application_type: e,
+                  }));
+                }}
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="alluser" id="alluser" />
@@ -222,6 +231,10 @@ export function AddOffer() {
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="new" id="new" />
                   <Label htmlFor="new">New User</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="second" id="second" />
+                  <Label htmlFor="second">Second Order</Label>
                 </div>
               </RadioGroup>
 

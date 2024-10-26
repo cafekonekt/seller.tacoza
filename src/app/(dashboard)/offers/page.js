@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,6 +9,8 @@ import {
 
 import { Settings2, Users } from "lucide-react";
 import { AddOffer } from "./AddOffer";
+import { apiGet } from "@/handlers/apiHandler";
+import { getSession } from "@/lib/auth/session";
 
 export const metadata = {
   title: "Offers - tacoza Seller",
@@ -17,17 +18,24 @@ export const metadata = {
 };
 
 export default async function Offers() {
+  const session = await getSession();
+  const offers = await apiGet("/api/shop/discount-coupons",
+    { headers: { Authorization: `Bearer ${session?.tokens?.access}` } }
+  );
+  console.log(offers);
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="text-lg font-semibold md:text-2xl">Offers</h1>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-4 w-full gap-4">
-        <OfferCard />
+        {
+          offers.map((offer) => (
+            <OfferCard key={offer.id} offer={offer} />
+          ))
+        }
         <AddOfferCard />
       </div>
-      <AddOffer />
-
       {/* Show this if no offers are available */}
       <div className="hidden flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
         <div className="flex flex-col items-center gap-1 text-center">
@@ -76,17 +84,17 @@ function OfferCard({ offer }) {
       <CardHeader>
         <CardTitle className="text-xl flex items-center border-2 border-white rounded-lg border-dashed p-1 pr-3 w-fit">
           <div className="bg-gray-800 font-bold mr-2 p-1 px-2 rounded text-white text-nowrap">
-            30% OFF
+            { Number(offer.discount_value) }{offer.discount_type == "percentage" ? "%" : ''} OFF
           </div>
-          FLAT30
+          {offer.coupon_code}
         </CardTitle>
         <CardDescription className="text-secondary">
-          Expires on 12 Aug 2024
+          Expires on {new Date(offer.valid_to).toDateString()}
         </CardDescription>
       </CardHeader>
       <CardFooter className="flex items-center justify-between">
         <p className="flex items-center text-white">
-          <Users className="h-3.5 w-3.5 mr-2" /> 2/5
+          <Users className="h-3.5 w-3.5 mr-2" /> {offer.usage}/{offer.use_limit}
         </p>
         <div className="flex items-center gap-2">
           <Button size="sm">View</Button>
@@ -104,7 +112,7 @@ function AddOfferCard({ offer }) {
     <div className="flex items-center justify-center rounded-lg border-2 border-gray-400 border-dashed p-4">
       <div className="flex flex-col items-center gap-2 text-center">
         <p>Create a new custom offer.</p>
-        <Button>+ Create</Button>
+        <AddOffer />
       </div>
     </div>
   );

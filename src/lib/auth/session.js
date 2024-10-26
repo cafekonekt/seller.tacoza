@@ -16,7 +16,7 @@ export async function login(formData) {
     }
     if (response) {
       const cookieStore = cookies();
-      const expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7); // 7 days
+      const expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 365);
       const session = await encrypt(response);
       cookieStore.set({
         name: "session",
