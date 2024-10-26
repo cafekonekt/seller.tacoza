@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, CreditCard, DollarSign, Users } from "lucide-react";
 import { BarChartOrders, LineChartRevenue } from "./charts";
 import { apiGet } from "@/handlers/apiHandler";
-import { getSession } from "@/lib/auth/session";
+import { getSession, logout } from "@/lib/auth/session";
 
 export default async function Dashboard() {
   const session = await getSession();
@@ -17,6 +17,8 @@ export default async function Dashboard() {
       Authorization: `Bearer ${session?.tokens?.access}`,
     },
   });
+
+  if (dashboardData?.status === 404) notFound();
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 overflow-y-scroll">

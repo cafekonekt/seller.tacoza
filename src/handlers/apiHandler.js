@@ -1,11 +1,9 @@
 "use server";
 // Base URL of the API, use environment variable
 const BASE_URL = process.env.SERVER_URL || "http://localhost:8000";
-// const BASE_URL = "https://api.tacoza.co";
 
 // Default headers for all requests
 const defaultHeaders = {
-  "Content-Type": "application/json",
   "cache": "no-store",
 };
 
@@ -40,6 +38,7 @@ const apiRequest = async (endpoint, options = {}, timeout = 10000) => {
     },
     signal: controller.signal,
   };
+
   try {
     const response = await fetch(`${BASE_URL}${endpoint}`, config);
     if (response.status === 401) {
@@ -73,19 +72,33 @@ const apiRequest = async (endpoint, options = {}, timeout = 10000) => {
 const apiGet = (endpoint, options = {}) =>
   apiRequest(endpoint, { method: "GET", ...options });
 
-const apiPost = (endpoint, body, options = {}) =>
-  apiRequest(endpoint, {
-    method: "POST",
-    body: JSON.stringify(body),
-    ...options,
-  });
+const apiPost = (endpoint, body, options = {}) => {
+  const isFormData = body instanceof FormData;
 
-const apiPut = (endpoint, body, options = {}) =>
-  apiRequest(endpoint, {
-    method: "PUT",
-    body: JSON.stringify(body),
+  return apiRequest(endpoint, {
+    method: "POST",
+    body: isFormData ? body : JSON.stringify(body),
     ...options,
+    headers: {
+      ...options.headers,
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
+    },
   });
+};
+
+const apiPut = (endpoint, body, options = {}) => {
+  const isFormData = body instanceof FormData;
+
+  return apiRequest(endpoint, {
+    method: "PUT",
+    body: isFormData ? body : JSON.stringify(body),
+    ...options,
+    headers: {
+      ...options.headers,
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
+    },
+  });
+};
 
 const apiDelete = (endpoint, options = {}) =>
   apiRequest(endpoint, { method: "DELETE", ...options });

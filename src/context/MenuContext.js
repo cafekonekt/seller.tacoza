@@ -81,6 +81,29 @@ export const MenuProvider = ({ children }) => {
     setSelectedItem(null); // Optionally reset selected item after saving
   };
 
+  const handleUpdate = async (item, type="menu") => {
+    if (type === "menu") {
+      const form = new FormData();
+      form.append("name", item.name);
+      form.append("food_type", item.food_type);
+      form.append("food_category", item.food_category);
+      form.append("food_subcategory", item.food_subcategory);
+      form.append("description", item.description);
+      form.append("slug", item.slug);
+      form.append("price", item.price);
+      form.append("image", item.image);
+      await updateItem(form);
+    } else {
+      // Handle addon saving logic here
+      setAddonItems((prevItems) =>
+        prevItems.map((item) =>
+          item.id === item.id ? item : item
+        )
+      );
+    }
+  }
+
+
   return (
     <MenuContext.Provider
       value={{
@@ -90,6 +113,7 @@ export const MenuProvider = ({ children }) => {
         toggleItemStockStatus,
         toggleItemFeaturedStatus,
         handleSave,
+        handleUpdate,
         menuItems,
       }}
     >

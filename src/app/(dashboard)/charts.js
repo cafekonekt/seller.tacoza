@@ -31,7 +31,7 @@ export function BarChartOrders({ dashboardData }) {
       <CardHeader className="space-y-0 pb-2">
         <CardDescription>Orders Today</CardDescription>
         <CardTitle className="text-4xl tabular-nums">
-          {dashboardData.todaysOrders}{" "}
+          {dashboardData?.todaysOrders}{" "}
           <span className="font-sans text-sm font-normal tracking-normal text-muted-foreground">
             orders
           </span>
@@ -52,7 +52,7 @@ export function BarChartOrders({ dashboardData }) {
               left: -4,
               right: -4,
             }}
-            data={dashboardData.orders}
+            data={dashboardData?.orders}
           >
             <Bar
               dataKey="orderCount"
@@ -116,11 +116,11 @@ export function BarChartOrders({ dashboardData }) {
         <CardDescription>
           Over the past 7 days, you have{" "}
           <span className="font-medium text-foreground">
-            {dashboardData.orders.reduce((total, day) => total + day.orderCount, 0)}
+            {dashboardData?.orders?.reduce((total, day) => total + day.orderCount, 0)}
           </span> orders.
         </CardDescription>
         <CardDescription>
-          You had <span className="font-medium text-foreground">{dashboardData.totalOrdersLastWeek}</span>{" "}
+          You had <span className="font-medium text-foreground">{dashboardData?.totalOrdersLastWeek}</span>{" "}
           orders last week.
         </CardDescription>
       </CardFooter>
@@ -189,7 +189,7 @@ export function LineChartRevenue({ dashboardData }) {
               }}
             />
             <Line
-              dataKey="dailyRevenue"
+              dataKey="revenue"
               type="natural"
               fill="var(--color-revenue)"
               stroke="var(--color-revenue)"
