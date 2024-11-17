@@ -39,15 +39,15 @@ export function Options() {
     <ToggleGroup type="single" variant="outline">
       <ToggleGroupItem value="bold" aria-label="Toggle bold">
         <UtensilsCrossed className="w-3.5 h-3.5 mr-1" />
-        DineIn
+        <p className="hidden md:block">DineIn</p>
       </ToggleGroupItem>
       <ToggleGroupItem value="italic" aria-label="Toggle italic">
         <Package className="w-3.5 h-3.5 mr-1" />
-        Takeaway
+        <p className="hidden md:block">Takeaway</p>
       </ToggleGroupItem>
       <ToggleGroupItem value="strikethrough" aria-label="Toggle strikethrough">
         <Bike className="w-3.5 h-3.5 mr-1" />
-        Delivery
+        <p className="hidden md:block">Delivery</p>
       </ToggleGroupItem>
     </ToggleGroup>
   );
