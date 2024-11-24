@@ -29,7 +29,7 @@ export function BarChartOrders({ dashboardData }) {
   return (
     <Card className="flex flex-col">
       <CardHeader className="space-y-0 pb-2">
-        <CardDescription>Orders Today</CardDescription>
+        <CardDescription>Orders</CardDescription>
         <CardTitle className="text-4xl tabular-nums">
           {dashboardData?.todaysOrders}{" "}
           <span className="font-sans text-sm font-normal tracking-normal text-muted-foreground">

@@ -12,11 +12,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export function DatePickerWithRange({ className }) {
-  const [date, setDate] = React.useState({
-    from: subDays(new Date(), 7), // Set 'from' date to 7 days before today
-    to: new Date(), // Set 'to' date to today
-  });
+export function DatePickerWithRange({ className, date, setDate }) {
 
   return (
     <div className={cn("grid gap-2", className)}>

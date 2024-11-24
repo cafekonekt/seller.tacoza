@@ -54,7 +54,7 @@ export function Sidebar() {
     { href: "/restaurant", label: "Outlet", icon: Store },
     { href: "/marketing", label: "Marketing", icon: Briefcase },
     { href: "#", label: "Customers", icon: Users, badge: "Coming Soon" },
-    { href: "#", label: "Finance", icon: LineChart, badge: "Coming Soon" },
+    { href: "/finance", label: "Finance", icon: LineChart },
   ];
 
   return (
@@ -102,7 +102,7 @@ export function Sidebar() {
             })}
           </nav>
         </div>
-        <div className="mt-auto p-4">
+        {/* <div className="mt-auto p-4">
           <Card className="hidden" x-chunk="dashboard-02-chunk-0">
             <CardHeader className="p-2 pt-0 md:p-4">
               <CardTitle>Upgrade to Pro</CardTitle>
@@ -130,7 +130,7 @@ export function Sidebar() {
               </Button>
             </CardContent>
           </Card>
-        </div>
+        </div> */}
       </div>
     </div>
   );

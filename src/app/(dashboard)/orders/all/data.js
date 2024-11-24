@@ -114,8 +114,8 @@ export const columns = [
 
 export default function OrderTable({ searchParams, data }) {
   const router = useRouter(); // Initialize useRouter
-
   // Extract the 'from' and 'to' dates from the searchParams
+  // 
   const fromUrl = searchParams?.from ? new Date(searchParams.from) : subDays(new Date(), 7);
   const toUrl = searchParams?.to ? new Date(searchParams.to) : new Date();
 
@@ -140,19 +140,11 @@ export default function OrderTable({ searchParams, data }) {
     },
   });
 
-  const handleDateChange = (newDateRange) => {
-    setDateRange(newDateRange); // Update date range state
-    const { from, to } = newDateRange;
-
-    // Update the URL with the new 'from' and 'to' values
-    const newSearchParams = new URLSearchParams(window.location.search);
-    newSearchParams.set("from", from.toISOString());
-    newSearchParams.set("to", to.toISOString());
-
-    // Push the updated URL
-    router.push(`?${newSearchParams.toString()}`);
+  const applyFilters = () => {
+    const from = format(dateRange.from, "yyyy-MM-dd");
+    const to = format(dateRange.to, "yyyy-MM-dd");
+    router.push(`/orders/all?from=${from}&to=${to}`);
   };
-
 
   const handleClick = (row) => {
     router.push(`/orders/${row.getValue("order_id")}`);
@@ -169,8 +161,11 @@ export default function OrderTable({ searchParams, data }) {
         />
         <DatePickerWithRange
           date={dateRange} // Use the current date range
-          setDate={handleDateChange} // Set date via handler
+          setDate={setDateRange} // Set date via handler
         />
+        <Button variant="primary" className="max-w-sm" onClick={applyFilters}>
+          Apply Filters
+        </Button>
       </div>
       <div className="rounded-md border">
         <Table>
