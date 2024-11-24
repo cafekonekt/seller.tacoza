@@ -13,7 +13,7 @@ import { notFound } from "next/navigation";
 export default async function Menu() {
   const items = await getMenu();
   const addons = await getAddons();
-  
+
   if (items?.status === 401 || addons?.status === 400) notFound();
   if (items?.status === 404 || addons?.status === 404) notFound();
 
@@ -29,10 +29,10 @@ export default async function Menu() {
                   <TabsTrigger value="items">
                     Items
                     <Badge className="ml-1 flex bg-muted-foreground shrink-0 items-center justify-center rounded-full">
-                      {items?.map(item =>
-                        item.sub_categories && item.sub_categories.length > 0
-                          ? item.sub_categories.reduce((total, subCategory) => total + Number(subCategory.food_items?.length), 0)
-                          : (item.food_items?.length || 0))}
+                      {items?.reduce((total, category) =>
+                        category.sub_categories?.length > 0
+                          ? total + category.sub_categories.reduce((total, subCategory) => total + Number(subCategory.food_items?.length), 0)
+                          : total + (category.food_items?.length), 0)}
                     </Badge>
                   </TabsTrigger>
                   <TabsTrigger value="addons">
