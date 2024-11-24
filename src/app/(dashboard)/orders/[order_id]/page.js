@@ -43,6 +43,7 @@ import Link from "next/link";
 
 export default async function Dashboard({ params }) {
   const order = await getOrder(params.order_id);
+  
   console.log(order, "order");
 
   return (
@@ -172,10 +173,9 @@ export default async function Dashboard({ params }) {
               <dl className="grid gap-3">
                 <div className="flex items-center justify-between">
                   <dt className="flex items-center gap-1 text-muted-foreground">
-                    <CreditCard className="h-4 w-4" />
-                    {order.payment_method}
+                    Payment Method
                   </dt>
-                  <dd>**** **** **** 4532</dd>
+                  <dd>{order.payment_method.toUpperCase()}</dd>
                 </div>
               </dl>
             </div>
