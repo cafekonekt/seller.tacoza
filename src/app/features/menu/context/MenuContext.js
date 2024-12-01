@@ -1,9 +1,8 @@
 'use client';
-import { addItem } from '@/lib/menu/addItem';
-import { updateItem } from '@/lib/menu/updateItem';
-// MenuContext.js
 import React, { createContext, useState, useContext } from 'react';
-
+// Import actions
+import { addItem } from '@/app/features/menu/server/actions/addItem';
+import { updateItem } from '@/app/features/menu/server/actions/updateItem';
 
 // Create the context
 const MenuContext = createContext();

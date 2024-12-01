@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -7,12 +8,10 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { TabsContent } from "@/components/ui/tabs";
-import { EllipsisVertical, SquareDot, Star } from "lucide-react";
-import { useMenuContext } from "@/context/MenuContext";
-import { AddCategory } from "./MenuAccordion";
 import Image from "next/image";
 import { Switch } from "@/components/ui/switch";
-import { useState } from "react";
+import { AddCategory } from "@/app/features/menu/components/MenuAccordion";
+import { useMenuContext } from "@/app/features/menu/context/MenuContext";
 
 // utils
 const iconMap = {

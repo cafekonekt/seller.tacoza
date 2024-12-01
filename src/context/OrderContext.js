@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { getSubscriptionURL } from "@/lib/orders/subLiveOrder";
-import { getOrders } from "@/lib/orders/getLiveOrder";
+import { getSubscriptionURL } from "@/app/features/orders/server/actions/subLiveOrder";
+import { getOrders } from "@/app/features/orders/server/actions/getLiveOrder";
 
 // Create the context
 const OrderContext = createContext();
@@ -20,19 +20,19 @@ export const OrderProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false); // Connection status
 
   const fetchSubscriptionURL = async () => {
-    const subscriptionURL = await getSubscriptionURL();
+    const [error, subscriptionURL] = await getSubscriptionURL();
+    if (error) setUrl('');
     setUrl(subscriptionURL?.url || '');
   }
   
   const fetchOrders = async () => {
-    try {
-      const data = await getOrders();
-      setOrder(data);
-      return data;
-    } catch (error) {
-      console.error(error);
-      return null;
+    const [error, data] = await getOrders();
+    if (error) {
+      console.error("Error fetching orders:", error);
+      return {};
     }
+    setOrder(data);
+    return data;
   };
   
   useEffect(() => {

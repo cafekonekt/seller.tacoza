@@ -1,9 +1,18 @@
-import { NextResponse } from 'next/server';
-import { getSession } from '@/lib/auth/session';
+import { NextResponse } from "next/server";
+import { getSession } from "@/lib/auth/session";
 
 // Define protected and public routes
-const protectedRoutes = ['/', '/orders', '/menu', '/table', '/offers', '/restaurant', '/customers', '/finance'];
-const publicRoutes = ['/login'];
+const protectedRoutes = [
+  "/",
+  "/orders",
+  "/menu",
+  "/table",
+  "/offers",
+  "/restaurant",
+  "/customers",
+  "/finance",
+];
+const publicRoutes = ["/login"];
 
 export default async function middleware(req) {
   const path = req.nextUrl.pathname;
@@ -16,12 +25,11 @@ export default async function middleware(req) {
   }
   // Redirect to /dashboard if user is authenticated and on a public route
   if (isPublicRoute && session?.user) {
-    return NextResponse.redirect(new URL('/', req.nextUrl));
+    return NextResponse.redirect(new URL("/", req.nextUrl));
   }
   return NextResponse.next();
 }
-
 // Config to exclude specific paths from middleware
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
+  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
 };
