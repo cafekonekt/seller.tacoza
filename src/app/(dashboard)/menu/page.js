@@ -1,21 +1,30 @@
+// components
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MenuAccordion, AddCategory } from "./MenuAccordion";
-import { AddonsAccordion } from "./AddonsAccordion";
-import { EditForm } from "./EditForm";
-import { MenuProvider } from "@/context/MenuContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { getMenu } from "@/lib/menu/getMenu";
-import { getAddons } from "@/lib/menu/getAddons";
-import Gallery from "./gallery";
-import { notFound } from "next/navigation";
+import {
+  MenuAccordion,
+  AddCategory,
+} from "@/app/features/menu/components/MenuAccordion";
+import { AddonsAccordion } from "@/app/features/menu/components/AddonsAccordion";
+import { EditForm } from "@/app/features/menu/components/EditForm";
+import Gallery from "@/app/features/menu/components/Gallery";
+import ErrorComponent from "@/components/ErrorComponent";
+// context
+import { MenuProvider } from "@/app/features/menu/context/MenuContext";
+// server actions
+import { getMenu } from "@/app/features/menu/server/actions/getMenu";
+import { getAddons } from "@/app/features/menu/server/actions/getAddons";
 
 export default async function Menu() {
-  const items = await getMenu();
-  const addons = await getAddons();
-
-  if (items?.status === 401 || addons?.status === 400) notFound();
-  if (items?.status === 404 || addons?.status === 404) notFound();
+  const itemsPromise = getMenu();
+  const addonsPromise = getAddons();
+  const [[itemsError, items], [addonsError, addons]] = await Promise.all([
+    itemsPromise,
+    addonsPromise,
+  ]);
+  const error = itemsError || addonsError;
+  if (error) return <ErrorComponent error={error} />;
 
   return (
     <MenuProvider>
@@ -29,16 +38,29 @@ export default async function Menu() {
                   <TabsTrigger value="items">
                     Items
                     <Badge className="ml-1 flex bg-muted-foreground shrink-0 items-center justify-center rounded-full">
-                      {items?.reduce((total, category) =>
-                        category.sub_categories?.length > 0
-                          ? total + category.sub_categories.reduce((total, subCategory) => total + Number(subCategory.food_items?.length), 0)
-                          : total + (category.food_items?.length), 0)}
+                      {items?.reduce(
+                        (total, category) =>
+                          category.sub_categories?.length > 0
+                            ? total +
+                              category.sub_categories.reduce(
+                                (total, subCategory) =>
+                                  total +
+                                  Number(subCategory.food_items?.length),
+                                0,
+                              )
+                            : total + category.food_items?.length,
+                        0,
+                      )}
                     </Badge>
                   </TabsTrigger>
                   <TabsTrigger value="addons">
                     Add-ons
                     <Badge className="ml-1 flex bg-muted-foreground shrink-0 items-center justify-center rounded-full">
-                      {addons?.reduce((total, addonCategory) => total + Number(addonCategory.addons?.length || 0), 0)}
+                      {addons?.reduce(
+                        (total, addonCategory) =>
+                          total + Number(addonCategory.addons?.length || 0),
+                        0,
+                      )}
                     </Badge>
                   </TabsTrigger>
                   <TabsTrigger value="combo">

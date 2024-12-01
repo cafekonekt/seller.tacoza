@@ -56,10 +56,10 @@ const apiRequest = async (endpoint, options = {}, timeout = 10000) => {
       console.error("Request timed out:", error);
       throw new Error("Request timed out");
     } else if (error instanceof HttpError) {
-      return { error: error.message, status: error.status };
+      throw error;
     } else {
       console.error("Unexpected Error:", error);
-      throw new Error("An unexpected error occurred");
+      throw new HttpError(500, "Internal Server Error", endpoint);
     }
   } finally {
     clearTimeout(id);

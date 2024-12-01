@@ -1,6 +1,5 @@
 'use client';
 import { useState } from "react";
-import { useMenuContext } from "@/context/MenuContext";
 import {
   Accordion,
   AccordionContent,
@@ -9,7 +8,7 @@ import {
 } from "@/components/ui/accordion";
 import { TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
-import { EllipsisVertical, SquareDot, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -20,6 +19,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
+// context
+import { useMenuContext } from "@/app/features/menu/context/MenuContext";
 // utils
 const iconMap = {
   veg: "/veg.svg",

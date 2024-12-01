@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useMenuContext } from "@/context/MenuContext";
-import { Button } from "@/components/ui/button";
+import Image from "next/image";
+// icons
 import {
   CircleHelp,
   ImagePlus,
@@ -11,6 +11,7 @@ import {
   Trash,
   X,
 } from "lucide-react";
+// components
 import {
   Select,
   SelectContent,
@@ -18,21 +19,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { GalleryDialog } from "./gallery";
-import { VariantsSelect, AddonsSelect } from "./forvariants";
-import Image from "next/image";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { GalleryDialog } from "@/app/features/menu/components/Gallery";
+import {
+  VariantsSelect,
+  AddonsSelect,
+} from "@/app/features/menu/components/Forvariants";
+// context
+import { useMenuContext } from "@/app/features/menu/context/MenuContext";
 // utils
 const iconMap = {
   veg: "/veg.svg",
@@ -41,11 +47,9 @@ const iconMap = {
 };
 
 export function EditForm({ foodCategory, addonCategory, type }) {
-  const { selectedItem, handleSave, handleUpdate, handleItemClick } = useMenuContext();
-
+  const { selectedItem, handleSave, handleUpdate, handleItemClick } =
+    useMenuContext();
   const [formData, setFormData] = useState(selectedItem);
-
-  console.log("selectedItem", selectedItem);
 
   useEffect(() => {
     setFormData(selectedItem);
@@ -100,8 +104,12 @@ export function EditForm({ foodCategory, addonCategory, type }) {
             type="single"
             variant="outline"
             className="flex gap-4 p-4"
-            value={formData.type === "menu" ? formData.food_type : formData.addon_type}
-          // onValueChange={(value) => setFoodTypeFilter(value)} // Set filter state
+            value={
+              formData.type === "menu"
+                ? formData.food_type
+                : formData.addon_type
+            }
+            // onValueChange={(value) => setFoodTypeFilter(value)} // Set filter state
           >
             {Object.keys(iconMap).map((type, key) => (
               <ToggleGroupItem
@@ -110,12 +118,7 @@ export function EditForm({ foodCategory, addonCategory, type }) {
                 aria-label="Veg Filter"
                 className="gap-2 px-4 data-[state=on]:bg-gray-100 align-left"
               >
-                <Image
-                  src={iconMap[type]}
-                  alt="Veg"
-                  height="16"
-                  width="16"
-                />
+                <Image src={iconMap[type]} alt="Veg" height="16" width="16" />
                 <span>{type.charAt(0).toUpperCase() + type.slice(1)}</span>
               </ToggleGroupItem>
             ))}

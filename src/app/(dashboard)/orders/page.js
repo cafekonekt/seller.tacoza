@@ -1,12 +1,16 @@
 "use client";
 import { useCallback } from "react";
+import { useMediaQuery } from "@react-hook/media-query";
+// components
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useOrderContext } from "@/context/OrderContext";
-import { updateOrderStatus } from "@/lib/orders/getLiveOrder";
-import { useMediaQuery } from "@react-hook/media-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { OrderCard } from "./OrderCard";
+import { OrderCard } from "@/app/features/orders/components/OrderCard";
+// server actions
+import { updateOrderStatus } from "@/app/features/orders/server/actions/getLiveOrder";
+// context
+import { useOrderContext } from "@/context/OrderContext";
+import { useToast } from "@/hooks/use-toast";
 
 const STATUS = {
   new: "pending",
@@ -16,34 +20,55 @@ const STATUS = {
 
 export default function LiveOrder() {
   const { liveOrder, setOrder } = useOrderContext();
+  const { toast } = useToast();
 
   const changeOrderStatus = useCallback(
     async (orderId, fromStatus, toStatus) => {
-      try {
+      setOrder((prev) => {
+        const fromItems = prev[fromStatus].filter(
+          (existingItem) => existingItem.order_id !== orderId,
+        );
+        const toItems = [
+          ...prev[toStatus],
+          prev[fromStatus].find(
+            (existingItem) => existingItem.order_id === orderId,
+          ),
+        ];
+        return {
+          ...prev,
+          [toStatus]: toItems,
+          [fromStatus]: fromItems,
+        };
+      });
+      // Update the order status on the server
+      const [error, response] = await updateOrderStatus(
+        orderId,
+        STATUS[toStatus],
+      );
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Failed to update order status",
+        });
         setOrder((prev) => {
-          const fromItems = prev[fromStatus].filter(
-            (existingItem) => existingItem.order_id !== orderId,
-          );
-          const toItems = [
-            ...prev[toStatus],
-            prev[fromStatus].find(
+          const fromItems = [
+            ...prev[fromStatus],
+            prev[toStatus].find(
               (existingItem) => existingItem.order_id === orderId,
             ),
           ];
+          const toItems = prev[toStatus].filter(
+            (existingItem) => existingItem.order_id !== orderId,
+          );
           return {
             ...prev,
             [toStatus]: toItems,
             [fromStatus]: fromItems,
           };
         });
-
-        // Update the order status on the server
-        await updateOrderStatus(orderId, STATUS[toStatus]);
-      } catch (error) {
-        console.error("Error updating order status:", error);
       }
     },
-    [setOrder],
+    [setOrder, toast],
   );
 
   const onDrop = async (event, toStatus) => {
@@ -62,7 +87,7 @@ export default function LiveOrder() {
     event.dataTransfer.setData("fromStatus", fromStatus);
   };
 
-  const isDesktop = useMediaQuery("(min-width: 768px)", { noSsr: true });
+  const isDesktop = useMediaQuery("(min-width: 768px)", { noSsr: false });
 
   if (isDesktop) {
     return (

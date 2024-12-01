@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { ReceiptText, Timer, User, UtensilsCrossed } from "lucide-react";
 import Image from "next/image";
+// components
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { updateOrder } from "@/lib/orders/updateOrder";
+// icons
+import { ReceiptText, Timer, User, UtensilsCrossed } from "lucide-react";
+// server actions
+import { updateOrder } from "@/app/features/orders/server/actions/updateOrder";
 
 export const OrderCard = ({
   order,
@@ -54,9 +57,11 @@ export const OrderCard = ({
           </span>
         </div>
         <div className="flex gap-2 text-xs font-semibold uppercase">
-          <div className="border-gray-200 border bg-gradient-to-tr from-gray-200 px-2 p-1 items-center flex rounded-md">
-            {order.table}
-          </div>
+          {order.table && (
+            <div className="border-gray-200 border bg-gradient-to-tr from-gray-200 px-2 p-1 items-center flex rounded-md">
+              {order.table}
+            </div>
+          )}
           <span className="flex gap-1 border-gray-200 bg-gradient-to-tr from-gray-200 border px-2 p-1 rounded-md w-fit">
             <UtensilsCrossed size={14} />
             {order.order_type}
@@ -133,7 +138,7 @@ export const OrderCard = ({
               changeOrderStatus(
                 order.order_id,
                 status,
-                status === "new" ? "preparing" : "completed"
+                status === "new" ? "preparing" : "completed",
               );
             }}
           >
@@ -152,7 +157,8 @@ function OrderTimer({ order }) {
   useEffect(() => {
     if (order.status === "completed") {
       const completedTime =
-        new Date(order.updated_at).getTime() - new Date(order.created_at).getTime();
+        new Date(order.updated_at).getTime() -
+        new Date(order.created_at).getTime();
       setElapsedTime(Math.floor(completedTime / 1000));
       return;
     }

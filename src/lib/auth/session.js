@@ -32,8 +32,8 @@ export async function login(formData) {
 }
 
 export async function getSession() {
-  const cookieStore = cookies();
-  const session = await cookieStore.get("session")?.value;
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session")?.value;
   if (!session) return null;
   return await decrypt(session);
 }
