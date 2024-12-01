@@ -1,8 +1,10 @@
 "use client"
 import React, { useState, useMemo } from "react";
-import { ChartFinanceComponent } from "./chart";
-import { PayoutsFinanceTable } from "./table";
-import { getOrderByDate } from "@/lib/orders/getOrder";
+// components
+import { ChartFinanceComponent } from "@/app/features/finance/components/Chart";
+import { PayoutsFinanceTable } from "@/app/features/finance/components/Table";
+// server actions
+import { getOrderByDate } from "@/app/features/finance/server/actions/getOrder";
 
 export default function Analytics({ tableData, chartData }) {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -12,7 +14,7 @@ export default function Analytics({ tableData, chartData }) {
     if (!cachedOrders[date]) {
       // Simulate fetching data (use dummy data here)
       const payoutForDay = tableData[date] || [];
-      const ordersForDay = await getOrderByDate(date)
+      const [error, ordersForDay] = await getOrderByDate(date);
 
       // Cache the fetched data
       setCachedOrders((prevCache) => ({

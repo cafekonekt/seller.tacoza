@@ -1,7 +1,9 @@
 "use client";
 import * as React from "react";
-import { useRouter } from "next/navigation"; // Import useRouter for URL updates
+import { useRouter } from "next/navigation";
+// icons
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+// components
 import {
   flexRender,
   getCoreRowModel,
@@ -22,8 +24,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DatePickerWithRange } from "@/components/ui/daterange-picker";
-import { subDays, isWithinInterval, format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
+// library
+import { subDays, isWithinInterval, format } from "date-fns";
+
 
 export const columns = [
   {
@@ -115,7 +119,6 @@ export const columns = [
 export default function OrderTable({ searchParams, data }) {
   const router = useRouter(); // Initialize useRouter
   // Extract the 'from' and 'to' dates from the searchParams
-  // 
   const fromUrl = searchParams?.from ? new Date(searchParams.from) : subDays(new Date(), 7);
   const toUrl = searchParams?.to ? new Date(searchParams.to) : new Date();
 
