@@ -69,12 +69,6 @@ export default async function Menu() {
                       0
                     </Badge>
                   </TabsTrigger>
-                  <TabsTrigger value="gallery">
-                    Gallery
-                    <Badge className="ml-1 flex bg-muted-foreground shrink-0 items-center justify-center rounded-full">
-                      76
-                    </Badge>
-                  </TabsTrigger>
                 </TabsList>
               </div>
               <MenuAccordion categories={items} />
@@ -82,9 +76,6 @@ export default async function Menu() {
               <TabsContent value="combo">
                 <AddCategory />
                 <Button className="ml-2">Add Combo</Button>
-              </TabsContent>
-              <TabsContent value="gallery">
-                <Gallery />
               </TabsContent>
             </Tabs>
           </div>

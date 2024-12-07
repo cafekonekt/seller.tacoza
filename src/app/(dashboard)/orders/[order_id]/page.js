@@ -48,13 +48,14 @@ import { getOrder } from "@/app/features/orders/server/actions/getOrder";
 export default async function Dashboard({ params }) {
   const { order_id } = await params;
   const [error, response] = await getOrder(order_id);
-  if (error) return <ErrorComponent error={error} />
+  if (error) return <ErrorComponent error={error} />;
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="text-lg font-semibold md:text-2xl">
-          response #{response.order_id} - {new Date(response.created_at).toDateString()}
+          Order Id #{response.order_id} -{" "}
+          {new Date(response.created_at).toDateString()}
         </h1>
       </div>
       <div className="grid grid-cols-5 gap-4 items-center justify-center">
@@ -72,13 +73,20 @@ export default async function Dashboard({ params }) {
                   <span className="sr-only">Copy Order ID</span>
                 </Button>
               </CardTitle>
-              <CardDescription>Date: {new Date(response.created_at).toDateString()}</CardDescription>
+              <CardDescription>
+                Date: {new Date(response.created_at).toDateString()}
+              </CardDescription>
             </div>
             <div className="ml-auto flex items-center gap-1">
               <Button size="sm" variant="outline" className="h-8 gap-1">
                 <Clock className="h-3.5 w-3.5" />
                 <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                  {Math.floor((new Date(response.updated_at).getTime() - new Date(response.created_at).getTime()) / (1000 * 60))} Minutes
+                  {Math.floor(
+                    (new Date(response.updated_at).getTime() -
+                      new Date(response.created_at).getTime()) /
+                      (1000 * 60),
+                  )}{" "}
+                  Minutes
                 </span>
               </Button>
               <DropdownMenu>
@@ -101,22 +109,29 @@ export default async function Dashboard({ params }) {
             <div className="grid gap-3">
               <div className="font-semibold">Order Details</div>
               <ul className="grid gap-3">
-                {
-                  response.items.map((item, key) => (
-                    <li className="flex items-center justify-between" key={key}>
-                      <span className="text-muted-foreground">
-                        {item.food_item.name} x <span>{item.quantity}</span>
+                {response.items.map((item, key) => (
+                  <li key={key}>
+                    <div className="flex items-center justify-between">
+                    <span>
+                      {item.food_item.name} x <span>{item.quantity}</span>
+                    </span>
+                    <span>₹{item.totalPrice}</span>
+                    </div>
+                    <div>
+                    {item.addons && (
+                      <span className="text-sm text-muted-foreground">
+                        {item.addons.map((addon) => addon.name).join(", ")}
                       </span>
-                      <span>{item.food_item.price}</span>
-                    </li>
-                  ))
-                }
+                    )}
+                    </div>
+                  </li>
+                ))}
               </ul>
               <Separator className="my-2" />
               <ul className="grid gap-3">
                 <li className="flex items-center justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>INR {response.total}</span>
+                  <span>₹{response.total}</span>
                 </li>
                 {/* <li className="flex items-center justify-between">
                   <span className="text-muted-foreground">Shipping</span>
@@ -124,11 +139,11 @@ export default async function Dashboard({ params }) {
                 </li> */}
                 <li className="flex items-center justify-between">
                   <span className="text-muted-foreground">Tax</span>
-                  <span>INR {response.total * 0.05}</span>
+                  <span>₹{response.total * 0.05}</span>
                 </li>
                 <li className="flex items-center justify-between font-semibold">
                   <span className="text-muted-foreground">Total</span>
-                  <span>INR {response.total}</span>
+                  <span>₹{response.total}</span>
                 </li>
               </ul>
             </div>
@@ -230,7 +245,10 @@ export default async function Dashboard({ params }) {
                   <TimelineItem key={key} status={item.done ? "done" : ""}>
                     <TimelineHeading side="right">{item.stage}</TimelineHeading>
                     <TimelineDot status={item.done ? "done" : ""} />
-                    {item.done && (response.order_timeline?.length-1 !== key) && <TimelineLine done />}
+                    {item.done &&
+                      response.order_timeline?.length - 1 !== key && (
+                        <TimelineLine done />
+                      )}
                     <TimelineContent>
                       <p>{new Date(item.created_at).toLocaleString()}</p>
                       {item.content}

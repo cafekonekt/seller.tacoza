@@ -1,9 +1,11 @@
 "use client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BadgePercent,
   Bell,
+  BellOff,
   Briefcase,
   ChefHat,
   Grid2X2,
@@ -20,19 +22,22 @@ import {
 import { useOrderContext } from "@/context/OrderContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import Image from "next/image";
 
 export function Sidebar() {
   const pathname = usePathname();
   const { liveOrder } = useOrderContext();
+  const [notificationPermission, setNotificationPermission] = useState(
+    Notification.permission,
+  );
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
+  useEffect(() => {
+    // Sync the initial state based on permission
+    if (notificationPermission === "granted") {
+      setNotificationsEnabled(true);
+    }
+  }, [notificationPermission]);
   const navItems = [
     { href: "/", label: "Dashboard", icon: Home },
     {
@@ -45,7 +50,7 @@ export function Sidebar() {
       href: "/orders",
       label: "Live Orders",
       icon: ShoppingCart,
-      badgeCount: liveOrder?.new?.length ? liveOrder.new.length : '',
+      badgeCount: liveOrder?.new?.length ? liveOrder.new.length : "",
     },
     { href: "/orders/all", label: "Orders", icon: ShoppingCart },
     { href: "/menu", label: "Menu", icon: Salad },
@@ -57,13 +62,39 @@ export function Sidebar() {
     { href: "/finance", label: "Finance", icon: LineChart },
   ];
 
+  const handleNotificationToggle = async () => {
+    if (notificationPermission === "default") {
+      const permission = await Notification.requestPermission();
+      setNotificationPermission(permission);
+      if (permission === "granted") {
+        setNotificationsEnabled(true);
+      }
+    } else if (notificationPermission === "granted") {
+      // Toggle notifications within the app
+      setNotificationsEnabled((prev) => !prev);
+    } else if (notificationPermission === "denied") {
+      alert(
+        "You have denied notifications. Please enable them in browser settings.",
+      );
+    }
+  };
+
   return (
     <div className="hidden border-r bg-muted/40 md:block">
       <div className="flex h-full max-h-screen flex-col gap-2">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
           <Image src="/image.png" width={100} height={30} alt="tacoza" />
-          <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-            <Bell className="h-4 w-4" />
+          <Button
+            variant="outline"
+            size="icon"
+            className="ml-auto h-8 w-8"
+            onClick={handleNotificationToggle}
+          >
+            {notificationsEnabled ? (
+              <Bell className="h-5 w-5" />
+            ) : (
+              <BellOff className="h-5 w-5" />
+            )}
             <span className="sr-only">Toggle notifications</span>
           </Button>
         </div>

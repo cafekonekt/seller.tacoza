@@ -1,3 +1,4 @@
+// components
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Table,
@@ -9,13 +10,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-import QrDialog from "./qr";
-import { getTables } from "@/lib/table/getTable";
-import { getArea } from "@/lib/table/getArea";
-import { AddTable } from "./AddTable";
-import { AddArea } from "./AddArea";
-import { DeleteTable } from "./DeleteTable";
+import QrDialog from "@/app/features/table/components/QR";
+import { AddTable } from "@/app/features/table/components/AddTable";
+import { AddArea } from "@/app/features/table/components/AddArea";
+import { DeleteTable } from "@/app/features/table/components/DeleteTable";
+import ErrorComponent from "@/components/ErrorComponent";
+// server actions
+import { getTables } from "@/app/features/table/server/actions/getTable";
+import { getArea } from "@/app/features/table/server/actions/getArea";
 
 export const metadata = {
   title: "Tables - tacoza Seller",
@@ -23,7 +25,6 @@ export const metadata = {
 };
 
 export function TableList({ tables }) {
-
   return (
     <Card className="py-8">
       <CardContent>
@@ -58,10 +59,11 @@ export function TableList({ tables }) {
 }
 
 export default async function TablePage() {
-  const response_tables = getTables();
-  const response_ares = getArea();
-  const [tables, areas] = await Promise.all([response_tables, response_ares]);
-
+  const promiseTables = getTables();
+  const promiseAreas = getArea();
+  const [[errorTables, tables], [errorAreas, areas]] = await Promise.all([promiseTables, promiseAreas]);
+  const error = errorTables || errorAreas;
+  if (error) return <ErrorComponent error={error} />
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
-import { createOffer } from "@/lib/offer/createOffer";
+// components
 import {
   Dialog,
   DialogContent,
@@ -24,8 +24,10 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-
+// hooks
 import { useToast } from "@/hooks/use-toast";
+// server actions
+import { createOffer } from "@/app/features/offers/server/actions/createOffer";
 
 const initialFormState = {
   coupon_code: "",
@@ -64,7 +66,6 @@ export function AddOffer() {
   };
 
   const handleSubmit = async (event) => {
-    console.log(formData);
     event.preventDefault();
     const requiredFields = {
       general: [

@@ -1,3 +1,4 @@
+// components
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -6,11 +7,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
+import { AddOffer } from "@/app/features/offers/components/AddOffer";
+import ErrorComponent from "@/components/ErrorComponent";
+// icons
 import { Settings2, Users } from "lucide-react";
-import { AddOffer } from "./AddOffer";
+// lib
 import { apiGet } from "@/handlers/apiHandler";
 import { getSession } from "@/lib/auth/session";
+// server actions
+import { getOffers } from "@/app/features/offers/server/actions/getOffers";
 
 export const metadata = {
   title: "Offers - tacoza Seller",
@@ -18,22 +23,18 @@ export const metadata = {
 };
 
 export default async function Offers() {
-  const session = await getSession();
-  const offers = await apiGet("/api/shop/discount-coupons",
-    { headers: { Authorization: `Bearer ${session?.tokens?.access}` } }
-  );
-  console.log(offers);
+  const [error, offers] = await getOffers();
+  if (error) return <ErrorComponent error={error} />;
+
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="text-lg font-semibold md:text-2xl">Offers</h1>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-4 w-full gap-4">
-        {
-          offers.map((offer) => (
-            <OfferCard key={offer.id} offer={offer} />
-          ))
-        }
+        {offers.map((offer) => (
+          <OfferCard key={offer.id} offer={offer} />
+        ))}
         <AddOfferCard />
       </div>
       {/* Show this if no offers are available */}
@@ -84,7 +85,8 @@ function OfferCard({ offer }) {
       <CardHeader>
         <CardTitle className="text-xl flex items-center border-2 border-white rounded-lg border-dashed p-1 pr-3 w-fit">
           <div className="bg-gray-800 font-bold mr-2 p-1 px-2 rounded text-white text-nowrap">
-            { Number(offer.discount_value) }{offer.discount_type == "percentage" ? "%" : ''} OFF
+            {Number(offer.discount_value)}
+            {offer.discount_type == "percentage" ? "%" : ""} OFF
           </div>
           {offer.coupon_code}
         </CardTitle>
