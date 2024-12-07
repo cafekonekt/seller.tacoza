@@ -1,17 +1,18 @@
 "use server";
 import { getSession } from "@/lib/auth/session";
-import { apiPut } from "@/handlers/apiHandler";
+import { apiDelete } from "@/handlers/apiHandler";
 import { catchError } from "@/app/utils/catchError";
+import { revalidatePath } from "next/cache";
 
-export async function updateItem(item) {
+export async function deleteTable(tableId) {
   const user = await getSession();
-  const slug = item instanceof FormData ? item.get("slug") : item.slug;
   const [error, response] = await catchError(
-    apiPut(`/api/shop/food-items/${slug}/`, item, {
+    apiDelete(`/api/shop/table/${tableId}/`, {
       headers: {
         Authorization: `Bearer ${user?.tokens?.access}`,
       },
     }),
   );
+  revalidatePath("/table");
   return [error, response];
 }

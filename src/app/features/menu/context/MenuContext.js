@@ -1,9 +1,10 @@
-'use client';
-import React, { createContext, useState, useContext } from 'react';
+"use client";
+import React, { createContext, useState, useContext } from "react";
 // Import actions
-import { addItem } from '@/app/features/menu/server/actions/addItem';
-import { updateItem } from '@/app/features/menu/server/actions/updateItem';
-
+import { addItem } from "@/app/features/menu/server/actions/addItem";
+import { updateItem } from "@/app/features/menu/server/actions/updateItem";
+// hooks
+import { useToast } from "@/hooks/use-toast";
 // Create the context
 const MenuContext = createContext();
 
@@ -15,6 +16,7 @@ export const MenuProvider = ({ children }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [menuItems, setMenuItems] = useState([]); // To manage all menu items
   const [addonItems, setAddonItems] = useState([]); // Manage addon items
+  const { toast } = useToast();
 
   const handleAddItem = (type = "menu") => {
     setSelectedItem({
@@ -72,15 +74,13 @@ export const MenuProvider = ({ children }) => {
     } else {
       // Handle addon saving logic here
       setAddonItems((prevItems) =>
-        prevItems.map((item) =>
-          item.id === item.id ? item : item
-        )
+        prevItems.map((item) => (item.id === item.id ? item : item)),
       );
     }
     setSelectedItem(null); // Optionally reset selected item after saving
   };
 
-  const handleUpdate = async (item, type="menu") => {
+  const handleUpdate = async (item, type = "menu") => {
     if (type === "menu") {
       const form = new FormData();
       form.append("name", item.name);
@@ -91,17 +91,25 @@ export const MenuProvider = ({ children }) => {
       form.append("slug", item.slug);
       form.append("price", item.price);
       form.append("image", item.image);
-      await updateItem(form);
+      const [error, response] = await updateItem(form);
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Error updating item",
+        });
+      } else {
+        toast({
+          variant: "success",
+          title: "Item updated successfully",
+        });
+      }
     } else {
       // Handle addon saving logic here
       setAddonItems((prevItems) =>
-        prevItems.map((item) =>
-          item.id === item.id ? item : item
-        )
+        prevItems.map((item) => (item.id === item.id ? item : item)),
       );
     }
-  }
-
+  };
 
   return (
     <MenuContext.Provider

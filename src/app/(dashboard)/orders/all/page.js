@@ -5,7 +5,7 @@ import ErrorComponent from "@/components/ErrorComponent";
 export default async function Dashboard({ searchParams }) {
   const range = await searchParams;
   const [error, response] = await getOrders(range);
-  
+
   if (error) return <ErrorComponent error={error} />
 
   return (

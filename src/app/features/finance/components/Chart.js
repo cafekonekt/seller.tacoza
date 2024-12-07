@@ -22,14 +22,13 @@ const chartConfig = {
 };
 
 export function ChartFinanceComponent({ handleBarClick, chartData }) {
-  console.log('chart component');
   return (
     <Card>
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
           <CardTitle>Finance - Payouts</CardTitle>
           <CardDescription>
-            Showing total payouts for the last 30 days.
+            Showing total payouts for the last 90 days.
           </CardDescription>
         </div>
       </CardHeader>

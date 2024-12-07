@@ -52,7 +52,6 @@ export function NewOrder() {
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log(data, "response data")
           setLiveOrder(data.message);
           setOrder({ ...liveOrder, new: [...liveOrder.new, data.message] });
           setDrawer(true);
