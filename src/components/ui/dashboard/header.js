@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useState } from "react";
 import {
   BadgePercent,
   Briefcase,
@@ -55,9 +56,7 @@ export function Header({ outlet }) {
       href: "/orders",
       label: "Live Orders",
       icon: ShoppingCart,
-      badgeCount: liveOrder?.newOrders?.length
-        ? liveOrder.newOrders.length
-        : "",
+      badgeCount: liveOrder?.new?.length ? liveOrder.new.length : "",
     },
     { href: "/orders/all", label: "Orders", icon: ShoppingCart },
     { href: "/menu", label: "Menu", icon: Salad },
@@ -66,11 +65,11 @@ export function Header({ outlet }) {
     { href: "/restaurant", label: "Outlet", icon: Store },
     { href: "/marketing", label: "Marketing", icon: Briefcase },
     { href: "#", label: "Customers", icon: Users, badge: "Coming Soon" },
-    { href: "#", label: "Finance", icon: LineChart, badge: "Coming Soon" },
+    { href: "/finance", label: "Finance", icon: LineChart },
   ];
 
   const { isConnected } = useOrderContext();
-  
+
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <Sheet>
@@ -116,7 +115,7 @@ export function Header({ outlet }) {
               );
             })}
           </nav>
-          <div className="mt-auto">
+          {/* <div className="mt-auto">
             <Card className="hidden">
               <CardHeader>
                 <CardTitle>Upgrade to Pro</CardTitle>
@@ -145,22 +144,9 @@ export function Header({ outlet }) {
                 </Button>
               </CardContent>
             </Card>
-          </div>
+          </div> */}
         </SheetContent>
       </Sheet>
-      <div className="hidden md:w-full md:flex-1">
-        <form>
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search orders..."
-              className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
-            />
-          </div>
-        </form>
-      </div>
-
       <div className="flex items-center gap-4 rounded-lg p-1 bg-accent">
         <div className="w-10 h-10 aspect-square">
           <Image

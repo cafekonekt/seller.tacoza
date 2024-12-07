@@ -39,6 +39,7 @@ import {
 } from "@/app/features/menu/components/Forvariants";
 // context
 import { useMenuContext } from "@/app/features/menu/context/MenuContext";
+
 // utils
 const iconMap = {
   veg: "/veg.svg",

@@ -6,7 +6,8 @@ import ErrorComponent from "@/components/ErrorComponent";
 import { Toaster } from "@/components/ui/toaster";
 import { OrderProvider } from "@/context/OrderContext";
 import { NewOrder } from "./newOrder";
-import { getOutlet } from "@/lib/outlet/getOutlet";
+// server actions
+import { getOutlet } from "@/app/features/restaurant/server/actions/getOutlet";
 
 const inter = Inter({ subsets: ["latin"] });
 export const metadata = {

@@ -41,7 +41,7 @@ export function PayoutsFinanceTable({ selectedDate, orders }) {
               </TableCell>
               <TableCell>{paymentStatus[order.payment_status]}</TableCell>
               <TableCell>{order.payment_method}</TableCell>
-              <TableCell className="text-right">{order.total}</TableCell>
+              <TableCell className="text-right">₹{order.total}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -50,13 +50,13 @@ export function PayoutsFinanceTable({ selectedDate, orders }) {
             <TableRow>
               <TableCell colSpan={3}>Total Amount</TableCell>
               <TableCell className="text-right">
-                INR {orders?.payout?.amount?.toFixed(2)}
+                ₹{orders?.payout?.amount?.toFixed(2)}
               </TableCell>
             </TableRow>
             <TableRow>
               <TableCell colSpan={3}>PG Charges + Tax</TableCell>
               <TableCell className="text-right">
-                INR -
+                ₹-
                 {(
                   orders?.payout?.amount * 0.0199 +
                   orders?.payout?.amount * 0.0199 * 0.18
@@ -66,7 +66,7 @@ export function PayoutsFinanceTable({ selectedDate, orders }) {
             <TableRow>
               <TableCell colSpan={3}>Total Payout Amount</TableCell>
               <TableCell className="text-right">
-                INR{" "}
+                ₹
                 {orders?.payout?.amount?.toFixed(2) -
                   (
                     orders?.payout?.amount * 0.0199 +
