@@ -57,7 +57,7 @@ const dummyData = {
 export function AddonsSelect() {
   return (
     <MultiSelect>
-      <MultiSelectTrigger className="w-80">
+      <MultiSelectTrigger className="w-fit">
         <MultiSelectValue placeholder="Select Frameworks" />
       </MultiSelectTrigger>
       <MultiSelectContent>
